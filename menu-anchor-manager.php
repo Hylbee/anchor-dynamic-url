@@ -515,6 +515,16 @@ class MenuAnchorManager {
      */
     public function getChangelog(): array {
         return [
+            '1.2.1' => [
+                'date' => '2025-07-24',
+                'changes' => [
+                    'fixed' => [
+                        __('Fixed fatal error with plugin activation hooks', 'menu-anchor-manager'),
+                        __('Replaced anonymous functions with named functions for WordPress compatibility', 'menu-anchor-manager'),
+                        __('Resolved Closure serialization error on plugin activation', 'menu-anchor-manager')
+                    ]
+                ]
+            ],
             '1.2.0' => [
                 'date' => '2025-07-24',
                 'changes' => [

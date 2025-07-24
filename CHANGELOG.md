@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.2.1] - 2025-07-24
+
+### Fixed
+- **Critical**: Fixed fatal error with plugin activation hooks
+- **Compatibility**: Replaced anonymous functions with named functions for WordPress compatibility
+- **Stability**: Resolved Closure serialization error that prevented plugin activation
+
+### Technical
+- Converted `register_activation_hook`, `register_deactivation_hook`, and `register_uninstall_hook` to use named functions
+- Improved WordPress core compatibility for hook serialization
+- Enhanced plugin stability during activation/deactivation cycles
+
 ## [1.2.0] - 2025-07-24
 
 ### Added
@@ -75,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Internationalization support**:
   - English as base language
   - French translation (`fr_FR`)
+  - Spanish translation (`es_ES`)
   - Translation-ready template (`.pot` file)
 - **Developer features**:
   - Helper function `get_menu_item_anchor()`
