@@ -3,7 +3,7 @@
  * Plugin Name: Menu Anchor Manager
  * Plugin URI: https://www.hylbee.fr/
  * Description: Add dynamic anchors to WordPress menu items with automatic URL updates
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
@@ -14,12 +14,226 @@
  * Tested up to: 6.4
  * Requires PHP: 7.4
  * Network: false
- * Update URI: https://api.github.com/repos/Hylbee/menu-anchor-manager/releases/latest
+ * Update URI: https://github.com/Hylbee/menu-anchor-manager
  */
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
+}
+
+// Define plugin constants
+define('MENU_ANCHOR_MANAGER_VERSION', '1.2.0');
+define('MENU_ANCHOR_MANAGER_FILE', __FILE__);
+define('MENU_ANCHOR_MANAGER_PATH', plugin_dir_path(__FILE__));
+define('MENU_ANCHOR_MANAGER_URL', plugin_dir_url(__FILE__));
+
+/**
+ * GitHub Updater Class - Handles automatic updates from GitHub releases
+ */
+class MenuAnchorUpdater {
+    private string $plugin_file;
+    private string $plugin_slug;
+    private string $version;
+    private string $github_repo = 'Hylbee/menu-anchor-manager';
+    private array $plugin_data;
+    
+    public function __construct(string $plugin_file, string $version) {
+        $this->plugin_file = plugin_basename($plugin_file);
+        $this->plugin_slug = dirname($this->plugin_file);
+        $this->version = $version;
+        
+        // Get plugin data
+        if (!function_exists('get_plugin_data')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        $this->plugin_data = get_plugin_data($plugin_file);
+        
+        $this->initHooks();
+    }
+    
+    /**
+     * Initialize WordPress hooks for update system
+     */
+    private function initHooks(): void {
+        add_filter('pre_set_site_transient_update_plugins', [$this, 'checkForUpdate']);
+        add_filter('plugins_api', [$this, 'pluginPopup'], 10, 3);
+        add_filter('upgrader_post_install', [$this, 'afterInstall'], 10, 3);
+        add_action('admin_init', [$this, 'showUpgradeNotification']);
+    }
+    
+    /**
+     * Check for plugin updates
+     */
+    public function checkForUpdate(object $transient): object {
+        if (empty($transient->checked)) {
+            return $transient;
+        }
+        
+        $remote_version = $this->getRemoteVersion();
+        
+        if (version_compare($this->version, $remote_version, '<')) {
+            $transient->response[$this->plugin_file] = (object) [
+                'slug' => $this->plugin_slug,
+                'plugin' => $this->plugin_file,
+                'new_version' => $remote_version,
+                'url' => "https://github.com/{$this->github_repo}",
+                'package' => $this->getDownloadUrl($remote_version),
+                'icons' => [],
+                'banners' => [],
+                'banners_rtl' => [],
+                'tested' => $this->plugin_data['RequiresWP'] ?? '6.4',
+                'requires_php' => $this->plugin_data['RequiresPHP'] ?? '7.4',
+                'compatibility' => new stdClass()
+            ];
+        }
+        
+        return $transient;
+    }
+    
+    /**
+     * Get remote version from GitHub API
+     */
+    private function getRemoteVersion(): string {
+        $transient_key = 'menu_anchor_manager_remote_version';
+        $cached_version = get_transient($transient_key);
+        
+        if ($cached_version !== false) {
+            return $cached_version;
+        }
+        
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_repo}/releases/latest", [
+            'timeout' => 10,
+            'headers' => [
+                'Accept' => 'application/vnd.github+json',
+                'User-Agent' => 'WordPress/' . get_bloginfo('version') . '; ' . get_bloginfo('url')
+            ]
+        ]);
+        
+        if (!is_wp_error($request) && wp_remote_retrieve_response_code($request) === 200) {
+            $body = wp_remote_retrieve_body($request);
+            $data = json_decode($body, true);
+            
+            if (isset($data['tag_name'])) {
+                $version = ltrim($data['tag_name'], 'v');
+                // Cache for 12 hours
+                set_transient($transient_key, $version, 12 * HOUR_IN_SECONDS);
+                return $version;
+            }
+        }
+        
+        return $this->version;
+    }
+    
+    /**
+     * Get download URL for specific version
+     */
+    private function getDownloadUrl(string $version): string {
+        return "https://github.com/{$this->github_repo}/releases/download/v{$version}/menu-anchor-manager.zip";
+    }
+    
+    /**
+     * Handle plugin information popup
+     */
+    public function pluginPopup($result, string $action, object $args) {
+        if ($action !== 'plugin_information' || $args->slug !== $this->plugin_slug) {
+            return $result;
+        }
+        
+        $remote_version = $this->getRemoteVersion();
+        $changelog = $this->getRemoteChangelog();
+        
+        return (object) [
+            'name' => $this->plugin_data['Name'],
+            'slug' => $this->plugin_slug,
+            'version' => $remote_version,
+            'author' => $this->plugin_data['Author'],
+            'author_profile' => $this->plugin_data['AuthorURI'],
+            'requires' => $this->plugin_data['RequiresWP'] ?? '5.0',
+            'tested' => $this->plugin_data['Tested'] ?? '6.4',
+            'requires_php' => $this->plugin_data['RequiresPHP'] ?? '7.4',
+            'sections' => [
+                'description' => $this->plugin_data['Description'],
+                'changelog' => $changelog
+            ],
+            'homepage' => "https://github.com/{$this->github_repo}",
+            'download_link' => $this->getDownloadUrl($remote_version),
+            'trunk' => $this->getDownloadUrl($remote_version)
+        ];
+    }
+    
+    /**
+     * Get remote changelog from GitHub
+     */
+    private function getRemoteChangelog(): string {
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_repo}/releases", [
+            'timeout' => 10
+        ]);
+        
+        if (is_wp_error($request)) {
+            return __('Unable to fetch changelog.', 'menu-anchor-manager');
+        }
+        
+        $body = wp_remote_retrieve_body($request);
+        $releases = json_decode($body, true);
+        
+        if (!is_array($releases)) {
+            return __('No changelog available.', 'menu-anchor-manager');
+        }
+        
+        $changelog = '<div class="menu-anchor-changelog">';
+        
+        foreach (array_slice($releases, 0, 5) as $release) { // Show last 5 releases
+            $version = ltrim($release['tag_name'], 'v');
+            $date = date('F j, Y', strtotime($release['published_at']));
+            $body = $release['body'] ? wp_kses_post($release['body']) : __('No release notes available.', 'menu-anchor-manager');
+            
+            $changelog .= "<h4>Version {$version} - {$date}</h4>";
+            $changelog .= "<div>{$body}</div>";
+        }
+        
+        $changelog .= '</div>';
+        
+        return $changelog;
+    }
+    
+    /**
+     * Handle post-installation cleanup
+     */
+    public function afterInstall(bool $response, array $hook_extra, array $result): bool {
+        global $wp_filesystem;
+        
+        $install_directory = plugin_dir_path($this->plugin_file);
+        $wp_filesystem->move($result['destination'], $install_directory);
+        $result['destination'] = $install_directory;
+        
+        if ($this->plugin_file) {
+            activate_plugin($this->plugin_file);
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Show upgrade notification in admin
+     */
+    public function showUpgradeNotification(): void {
+        if (!current_user_can('update_plugins')) {
+            return;
+        }
+        
+        $remote_version = $this->getRemoteVersion();
+        
+        if (version_compare($this->version, $remote_version, '<')) {
+            $message = sprintf(
+                __('Menu Anchor Manager version %s is available. <a href="%s">Update now</a>.', 'menu-anchor-manager'),
+                $remote_version,
+                wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin=' . $this->plugin_file), 'upgrade-plugin_' . $this->plugin_file)
+            );
+            
+            echo '<div class="notice notice-warning is-dismissible"><p>' . $message . '</p></div>';
+        }
+    }
 }
 
 /**
@@ -212,10 +426,12 @@ class MenuAnchorService {
  */
 class MenuAnchorManager {
     private MenuAnchorService $service;
+    private MenuAnchorUpdater $updater;
     private static ?MenuAnchorManager $instance = null;
     
     private function __construct() {
         $this->service = new MenuAnchorService();
+        $this->updater = new MenuAnchorUpdater(MENU_ANCHOR_MANAGER_FILE, MENU_ANCHOR_MANAGER_VERSION);
         $this->initHooks();
     }
     
@@ -256,14 +472,14 @@ class MenuAnchorManager {
         add_filter('plugin_row_meta', [$this, 'addPluginLinks'], 10, 2);
         
         // Add plugin action links
-        add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'addActionLinks']);
+        add_filter('plugin_action_links_' . plugin_basename(MENU_ANCHOR_MANAGER_FILE), [$this, 'addActionLinks']);
     }
     
     /**
      * Translate plugin description in plugins list
      */
     public function translatePluginMeta(array $plugin_meta, string $plugin_file): array {
-        if (plugin_basename(__FILE__) === $plugin_file) {
+        if (plugin_basename(MENU_ANCHOR_MANAGER_FILE) === $plugin_file) {
             $plugin_meta[1] = __('Add dynamic anchors to WordPress menu items with automatic URL updates', 'menu-anchor-manager');
         }
         
@@ -274,9 +490,9 @@ class MenuAnchorManager {
      * Add custom links to plugin row (changelog, support, etc.)
      */
     public function addPluginLinks(array $plugin_meta, string $plugin_file): array {
-        if (plugin_basename(__FILE__) === $plugin_file) {
+        if (plugin_basename(MENU_ANCHOR_MANAGER_FILE) === $plugin_file) {
             $plugin_meta[] = '<a href="#" onclick="MenuAnchorManager.showChangelog(); return false;">' . __('View Changelog', 'menu-anchor-manager') . '</a>';
-            $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager/issues" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
+            $plugin_meta[] = '<a href="https://www.hylbee.fr/support" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
             $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager" target="_blank">' . __('GitHub', 'menu-anchor-manager') . '</a>';
         }
         
@@ -299,6 +515,23 @@ class MenuAnchorManager {
      */
     public function getChangelog(): array {
         return [
+            '1.2.0' => [
+                'date' => '2025-07-24',
+                'changes' => [
+                    'added' => [
+                        __('Automatic update system via GitHub releases', 'menu-anchor-manager'),
+                        __('Smart caching system for update checks (12-hour cache)', 'menu-anchor-manager'),
+                        __('Admin notifications for available updates', 'menu-anchor-manager'),
+                        __('Plugin information popup with GitHub changelog integration', 'menu-anchor-manager'),
+                        __('Comprehensive error handling for network requests', 'menu-anchor-manager')
+                    ],
+                    'improved' => [
+                        __('Enhanced plugin architecture with constants and better organization', 'menu-anchor-manager'),
+                        __('Added activation/deactivation/uninstall hooks with proper cleanup', 'menu-anchor-manager'),
+                        __('Better version checking and compatibility validation', 'menu-anchor-manager')
+                    ]
+                ]
+            ],
             '1.1.0' => [
                 'date' => '2025-07-24',
                 'changes' => [
@@ -409,6 +642,15 @@ class MenuAnchorManager {
             font-size: 0.85em;
             color: #0073aa;
         }
+        
+        /* Update notification styles */
+        .menu-anchor-update-notice {
+            background: #fff;
+            border-left: 4px solid #00a0d2;
+            box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+            margin: 5px 15px 2px;
+            padding: 1px 12px;
+        }
         ";
         
         wp_add_inline_style('nav-menu', $css);
@@ -490,29 +732,13 @@ class MenuAnchorManager {
      * Load plugin text domain for translations
      */
     public function loadTextDomain(): void {
-        load_plugin_textdomain('menu-anchor-manager', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        load_plugin_textdomain('menu-anchor-manager', false, dirname(plugin_basename(MENU_ANCHOR_MANAGER_FILE)) . '/languages');
     }
 }
 
 // Initialize the plugin
 add_action('init', function() {
     MenuAnchorManager::getInstance();
-});
-
-/**
- * Plugin activation hook
- */
-register_activation_hook(__FILE__, function() {
-    // Nothing specific needed for activation
-    // The plugin works immediately after activation
-});
-
-/**
- * Plugin deactivation hook
- */
-register_deactivation_hook(__FILE__, function() {
-    // Clean up is optional since we're using WordPress meta system
-    // Meta data will remain in case user reactivates
 });
 
 // Helper function for developers (optional)
@@ -528,3 +754,49 @@ if (!function_exists('get_menu_item_anchor')) {
         return $repository->getAnchor($menu_item_id);
     }
 }
+
+/**
+ * Plugin activation hook
+ */
+register_activation_hook(__FILE__, function() {
+    // Check WordPress version
+    if (version_compare(get_bloginfo('version'), '5.0', '<')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(__('Menu Anchor Manager requires WordPress 5.0 or higher.', 'menu-anchor-manager'));
+    }
+    
+    // Check PHP version
+    if (version_compare(PHP_VERSION, '7.4', '<')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(__('Menu Anchor Manager requires PHP 7.4 or higher.', 'menu-anchor-manager'));
+    }
+    
+    // Clear update transients
+    delete_transient('menu_anchor_manager_remote_version');
+});
+
+/**
+ * Plugin deactivation hook
+ */
+register_deactivation_hook(__FILE__, function() {
+    // Clear update transients
+    delete_transient('menu_anchor_manager_remote_version');
+});
+
+/**
+ * Plugin uninstall hook (in separate uninstall.php file if needed)
+ */
+register_uninstall_hook(__FILE__, function() {
+    // Clean up plugin data if user chooses to delete plugin
+    global $wpdb;
+    
+    // Remove all menu anchor meta data
+    $wpdb->delete(
+        $wpdb->postmeta,
+        ['meta_key' => '_menu_item_anchor'],
+        ['%s']
+    );
+    
+    // Clear transients
+    delete_transient('menu_anchor_manager_remote_version');
+});

@@ -5,7 +5,7 @@ A WordPress plugin that adds dynamic anchor management to menu items with automa
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
+[![Version](https://img.shields.io/badge/Version-1.2.0-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
 
 ## Description
 
@@ -16,6 +16,7 @@ Menu Anchor Manager solves a common WordPress problem: broken anchor links when 
 ### ✨ Core Features
 - **Dynamic anchor management** for WordPress menu items
 - **Automatic URL updates** when page slugs change
+- **GitHub-based update system** with automatic notifications
 - **Security-first approach** with input sanitization
 - **Case-sensitive anchors** preserved as entered
 - **Clean, intuitive interface** integrated into WordPress menus

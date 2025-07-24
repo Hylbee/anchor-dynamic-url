@@ -6,7 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- No changes yet.
+
+### Planned
+- Nothing yet
+
+## [1.2.0] - 2025-07-24
+
+### Added
+- **Automatic update system**: Complete GitHub-based update mechanism
+  - Smart caching system for update checks (12-hour cache)
+  - Admin notifications for available updates
+  - Plugin information popup with GitHub changelog integration
+  - Comprehensive error handling for network requests
+- **Enhanced plugin lifecycle management**:
+  - Activation hooks with WordPress/PHP version checking
+  - Deactivation hooks with proper cleanup
+  - Uninstall hooks for complete data removal
+
+### Improved
+- **Plugin architecture**: Added constants and better code organization
+- **Version management**: Enhanced compatibility validation system
+- **Performance**: Intelligent caching to reduce API calls
+- **User experience**: Seamless update notifications and one-click updates
+
+### Technical
+- Added `MenuAnchorUpdater` class with full GitHub integration
+- Implemented WordPress update API compatibility
+- Enhanced error handling and network request management
+- Added comprehensive plugin metadata support
 
 ## [1.1.0] - 2025-07-24
 
@@ -115,7 +142,7 @@ Contributions are welcome! Please follow these guidelines:
 ### Development Setup
 ```bash
 # Clone the repository
-git clone https://github.com/Hylbee/menu-anchor-manager
+git clone [repository-url]
 
 # Install in WordPress plugins directory
 cp -r menu-anchor-manager /path/to/wordpress/wp-content/plugins/
