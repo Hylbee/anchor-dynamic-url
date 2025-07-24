@@ -10,6 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.2.2] - 2025-07-24
+
+### Fixed
+- **Sanitization**: Fixed anchor sanitization not applying during menu save
+- **User Experience**: Anchors are now properly sanitized immediately when saving menus
+- **Consistency**: Users now see sanitized anchors directly in the interface after saving
+
+### Improved
+- **Code Quality**: Refactored sanitization logic to eliminate code duplication
+- **Architecture**: Created `AnchorSanitizer` utility class for better code organization
+- **Maintainability**: Enhanced domain-driven architecture with shared utilities
+- **DRY Principle**: Single sanitization method used throughout the plugin
+
+### Technical
+- Introduced `AnchorSanitizer` utility class with static `sanitize()` method
+- Removed duplicated sanitization code from `MenuItemAnchor` and `MenuAnchorService`
+- Improved separation of concerns with dedicated utility classes
+
 ## [1.2.1] - 2025-07-24
 
 ### Fixed

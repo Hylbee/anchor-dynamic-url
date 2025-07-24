@@ -3,7 +3,7 @@
  * Plugin Name: Menu Anchor Manager
  * Plugin URI: https://www.hylbee.fr/
  * Description: Add dynamic anchors to WordPress menu items with automatic URL updates
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MENU_ANCHOR_MANAGER_VERSION', '1.2.1');
+define('MENU_ANCHOR_MANAGER_VERSION', '1.2.2');
 define('MENU_ANCHOR_MANAGER_FILE', __FILE__);
 define('MENU_ANCHOR_MANAGER_PATH', plugin_dir_path(__FILE__));
 define('MENU_ANCHOR_MANAGER_URL', plugin_dir_url(__FILE__));
@@ -237,6 +237,39 @@ class MenuAnchorUpdater {
 }
 
 /**
+ * Utility class for anchor sanitization
+ */
+class AnchorSanitizer {
+    /**
+     * Sanitize anchor to be URL-safe and secure
+     */
+    public static function sanitize(?string $anchor): ?string {
+        if (empty($anchor)) {
+            return null;
+        }
+        
+        // Remove everything after dangerous characters for security
+        $anchor = trim($anchor);
+        $anchor = preg_split('/[?\/\\\\]/', $anchor)[0];
+        
+        // Convert spaces to hyphens
+        $anchor = str_replace([' ', '\t', '\n', '\r'], '-', $anchor);
+        
+        // Remove any characters that aren't letters, numbers, hyphens, or underscores
+        $anchor = preg_replace('/[^a-zA-Z0-9\-_]/', '', $anchor);
+        
+        // Remove multiple consecutive hyphens (keep case sensitivity)
+        $anchor = preg_replace('/-+/', '-', $anchor);
+        
+        // Remove leading/trailing hyphens
+        $anchor = trim($anchor, '-');
+        
+        // Return null if empty after sanitization
+        return !empty($anchor) ? $anchor : null;
+    }
+}
+
+/**
  * Domain Entity - Represents a menu item with anchor capability
  */
 class MenuItemAnchor {
@@ -247,7 +280,7 @@ class MenuItemAnchor {
     
     public function __construct(int $menuItemId, ?string $anchor = null, ?int $targetPageId = null, string $originalUrl = '') {
         $this->menuItemId = $menuItemId;
-        $this->anchor = $this->sanitizeAnchor($anchor);
+        $this->anchor = AnchorSanitizer::sanitize($anchor);
         $this->targetPageId = $targetPageId;
         $this->originalUrl = $originalUrl;
     }
@@ -276,34 +309,6 @@ class MenuItemAnchor {
      */
     public function getAnchor(): ?string {
         return $this->anchor;
-    }
-    
-    /**
-     * Sanitize anchor to be URL-safe and secure
-     */
-    private function sanitizeAnchor(?string $anchor): ?string {
-        if (empty($anchor)) {
-            return null;
-        }
-        
-        // Remove everything after dangerous characters for security
-        $anchor = trim($anchor);
-        $anchor = preg_split('/[?\/\\\\]/', $anchor)[0];
-        
-        // Convert spaces to hyphens
-        $anchor = str_replace([' ', '\t', '\n', '\r'], '-', $anchor);
-        
-        // Remove any characters that aren't letters, numbers, hyphens, or underscores
-        $anchor = preg_replace('/[^a-zA-Z0-9\-_]/', '', $anchor);
-        
-        // Remove multiple consecutive hyphens (keep case sensitivity)
-        $anchor = preg_replace('/-+/', '-', $anchor);
-        
-        // Remove leading/trailing hyphens
-        $anchor = trim($anchor, '-');
-        
-        // Return null if empty after sanitization
-        return !empty($anchor) ? $anchor : null;
     }
 }
 
@@ -396,7 +401,11 @@ class MenuAnchorService {
         }
         
         $anchor = $_POST['menu-item-anchor'][$menu_item_db_id];
-        $this->repository->saveAnchor($menu_item_db_id, $anchor);
+        
+        // Sanitize anchor before saving
+        $sanitized_anchor = AnchorSanitizer::sanitize($anchor);
+        
+        $this->repository->saveAnchor($menu_item_db_id, $sanitized_anchor);
     }
     
     /**
@@ -515,6 +524,20 @@ class MenuAnchorManager {
      */
     public function getChangelog(): array {
         return [
+            '1.2.2' => [
+                'date' => '2025-07-24',
+                'changes' => [
+                    'fixed' => [
+                        __('Fixed anchor sanitization not applying during menu save', 'menu-anchor-manager'),
+                        __('Anchors are now properly sanitized immediately when saving menus', 'menu-anchor-manager')
+                    ],
+                    'improved' => [
+                        __('Refactored sanitization logic to eliminate code duplication', 'menu-anchor-manager'),
+                        __('Created AnchorSanitizer utility class for better code organization', 'menu-anchor-manager'),
+                        __('Enhanced domain-driven architecture with shared utilities', 'menu-anchor-manager')
+                    ]
+                ]
+            ],
             '1.2.1' => [
                 'date' => '2025-07-24',
                 'changes' => [
