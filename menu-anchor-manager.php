@@ -14,6 +14,7 @@
  * Tested up to: 6.4
  * Requires PHP: 7.4
  * Network: false
+ * Update URI: https://api.github.com/repos/Hylbee/menu-anchor-manager/releases/latest
  */
 
 // Prevent direct access
