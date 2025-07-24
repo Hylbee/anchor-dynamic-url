@@ -3,7 +3,7 @@
  * Plugin Name: Menu Anchor Manager
  * Plugin URI: https://www.hylbee.fr/
  * Description: Add dynamic anchors to WordPress menu items with automatic URL updates
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MENU_ANCHOR_MANAGER_VERSION', '1.2.0');
+define('MENU_ANCHOR_MANAGER_VERSION', '1.2.1');
 define('MENU_ANCHOR_MANAGER_FILE', __FILE__);
 define('MENU_ANCHOR_MANAGER_PATH', plugin_dir_path(__FILE__));
 define('MENU_ANCHOR_MANAGER_URL', plugin_dir_url(__FILE__));
@@ -758,7 +758,9 @@ if (!function_exists('get_menu_item_anchor')) {
 /**
  * Plugin activation hook
  */
-register_activation_hook(__FILE__, function() {
+register_activation_hook(__FILE__, 'menu_anchor_manager_activate');
+
+function menu_anchor_manager_activate() {
     // Check WordPress version
     if (version_compare(get_bloginfo('version'), '5.0', '<')) {
         deactivate_plugins(plugin_basename(__FILE__));
@@ -773,20 +775,24 @@ register_activation_hook(__FILE__, function() {
     
     // Clear update transients
     delete_transient('menu_anchor_manager_remote_version');
-});
+}
 
 /**
  * Plugin deactivation hook
  */
-register_deactivation_hook(__FILE__, function() {
+register_deactivation_hook(__FILE__, 'menu_anchor_manager_deactivate');
+
+function menu_anchor_manager_deactivate() {
     // Clear update transients
     delete_transient('menu_anchor_manager_remote_version');
-});
+}
 
 /**
- * Plugin uninstall hook (in separate uninstall.php file if needed)
+ * Plugin uninstall hook
  */
-register_uninstall_hook(__FILE__, function() {
+register_uninstall_hook(__FILE__, 'menu_anchor_manager_uninstall');
+
+function menu_anchor_manager_uninstall() {
     // Clean up plugin data if user chooses to delete plugin
     global $wpdb;
     
@@ -799,4 +805,4 @@ register_uninstall_hook(__FILE__, function() {
     
     // Clear transients
     delete_transient('menu_anchor_manager_remote_version');
-});
+}
