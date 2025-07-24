@@ -5,7 +5,7 @@ A WordPress plugin that adds dynamic anchor management to menu items with automa
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/hylbee/menu-anchor-manager/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
 
 ## Description
 
@@ -54,7 +54,7 @@ Menu Anchor Manager solves a common WordPress problem: broken anchor links when 
 ### From Source
 ```bash
 # Clone the repository
-git clone https://github.com/hylbee/menu-anchor-manager.git
+git clone https://github.com/Hylbee/menu-anchor-manager.git
 
 # Copy to WordPress plugins directory
 cp -r menu-anchor-manager /path/to/wordpress/wp-content/plugins/
@@ -150,7 +150,7 @@ The plugin follows domain-driven design principles:
 
 ```bash
 # Clone repository
-git clone https://github.com/hylbee/menu-anchor-manager.git
+git clone https://github.com/Hylbee/menu-anchor-manager.git
 
 # Create symbolic link in WordPress
 ln -s /path/to/menu-anchor-manager /path/to/wordpress/wp-content/plugins/
@@ -228,9 +228,9 @@ A: Yes, the plugin is fully translatable and works with WPML, Polylang, and othe
 
 ## Support
 
-- **Documentation**: [https://www.hylbee.fr/plugins/menu-anchor-manager](https://www.hylbee.fr/plugins/menu-anchor-manager)
-- **Support Forum**: [https://www.hylbee.fr/support](https://www.hylbee.fr/support)
-- **Issues**: [GitHub Issues](https://github.com/hylbee/menu-anchor-manager/issues)
+- **Documentation**: [https://github.com/Hylbee/menu-anchor-manager/blob/main/README.md](https://github.com/Hylbee/menu-anchor-manager/blob/main/README.md)
+- **Support Forum**: [https://github.com/Hylbee/menu-anchor-manager/issues](https://github.com/Hylbee/menu-anchor-manager/issues)
+- **Issues**: [GitHub Issues](https://github.com/Hylbee/menu-anchor-manager/issues)
 
 ## License
 

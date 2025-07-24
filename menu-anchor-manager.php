@@ -275,8 +275,8 @@ class MenuAnchorManager {
     public function addPluginLinks(array $plugin_meta, string $plugin_file): array {
         if (plugin_basename(__FILE__) === $plugin_file) {
             $plugin_meta[] = '<a href="#" onclick="MenuAnchorManager.showChangelog(); return false;">' . __('View Changelog', 'menu-anchor-manager') . '</a>';
-            $plugin_meta[] = '<a href="https://www.hylbee.fr/support" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
-            $plugin_meta[] = '<a href="https://github.com/hylbee/menu-anchor-manager" target="_blank">' . __('GitHub', 'menu-anchor-manager') . '</a>';
+            $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager/issues" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
+            $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager" target="_blank">' . __('GitHub', 'menu-anchor-manager') . '</a>';
         }
         
         return $plugin_meta;
