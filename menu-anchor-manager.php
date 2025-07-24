@@ -474,9 +474,6 @@ class MenuAnchorManager {
         // Load text domain for translations
         add_action('plugins_loaded', [$this, 'loadTextDomain']);
         
-        // Add plugin description translation
-        add_filter('plugin_row_meta', [$this, 'translatePluginMeta'], 10, 2);
-        
         // Add changelog and additional plugin links
         add_filter('plugin_row_meta', [$this, 'addPluginLinks'], 10, 2);
         
@@ -485,23 +482,12 @@ class MenuAnchorManager {
     }
     
     /**
-     * Translate plugin description in plugins list
-     */
-    public function translatePluginMeta(array $plugin_meta, string $plugin_file): array {
-        if (plugin_basename(MENU_ANCHOR_MANAGER_FILE) === $plugin_file) {
-            $plugin_meta[1] = __('Add dynamic anchors to WordPress menu items with automatic URL updates', 'menu-anchor-manager');
-        }
-        
-        return $plugin_meta;
-    }
-    
-    /**
      * Add custom links to plugin row (changelog, support, etc.)
      */
     public function addPluginLinks(array $plugin_meta, string $plugin_file): array {
         if (plugin_basename(MENU_ANCHOR_MANAGER_FILE) === $plugin_file) {
-            $plugin_meta[] = '<a href="#" onclick="MenuAnchorManager.showChangelog(); return false;">' . __('View Changelog', 'menu-anchor-manager') . '</a>';
-            $plugin_meta[] = '<a href="https://www.hylbee.fr/support" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
+            $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager/blob/v' . MENU_ANCHOR_MANAGER_VERSION . '/CHANGELOG.md" target="_blank"> ' . __('View Changelog', 'menu-anchor-manager') . '</a>';
+            $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager/issues" target="_blank">' . __('Support', 'menu-anchor-manager') . '</a>';
             $plugin_meta[] = '<a href="https://github.com/Hylbee/menu-anchor-manager" target="_blank">' . __('GitHub', 'menu-anchor-manager') . '</a>';
         }
         
@@ -520,85 +506,10 @@ class MenuAnchorManager {
     }
     
     /**
-     * Get plugin changelog data
-     */
-    public function getChangelog(): array {
-        return [
-            '1.2.2' => [
-                'date' => '2025-07-24',
-                'changes' => [
-                    'fixed' => [
-                        __('Fixed anchor sanitization not applying during menu save', 'menu-anchor-manager'),
-                        __('Anchors are now properly sanitized immediately when saving menus', 'menu-anchor-manager')
-                    ],
-                    'improved' => [
-                        __('Refactored sanitization logic to eliminate code duplication', 'menu-anchor-manager'),
-                        __('Created AnchorSanitizer utility class for better code organization', 'menu-anchor-manager'),
-                        __('Enhanced domain-driven architecture with shared utilities', 'menu-anchor-manager')
-                    ]
-                ]
-            ],
-            '1.2.1' => [
-                'date' => '2025-07-24',
-                'changes' => [
-                    'fixed' => [
-                        __('Fixed fatal error with plugin activation hooks', 'menu-anchor-manager'),
-                        __('Replaced anonymous functions with named functions for WordPress compatibility', 'menu-anchor-manager'),
-                        __('Resolved Closure serialization error on plugin activation', 'menu-anchor-manager')
-                    ]
-                ]
-            ],
-            '1.2.0' => [
-                'date' => '2025-07-24',
-                'changes' => [
-                    'added' => [
-                        __('Automatic update system via GitHub releases', 'menu-anchor-manager'),
-                        __('Smart caching system for update checks (12-hour cache)', 'menu-anchor-manager'),
-                        __('Admin notifications for available updates', 'menu-anchor-manager'),
-                        __('Plugin information popup with GitHub changelog integration', 'menu-anchor-manager'),
-                        __('Comprehensive error handling for network requests', 'menu-anchor-manager')
-                    ],
-                    'improved' => [
-                        __('Enhanced plugin architecture with constants and better organization', 'menu-anchor-manager'),
-                        __('Added activation/deactivation/uninstall hooks with proper cleanup', 'menu-anchor-manager'),
-                        __('Better version checking and compatibility validation', 'menu-anchor-manager')
-                    ]
-                ]
-            ],
-            '1.1.0' => [
-                'date' => '2025-07-24',
-                'changes' => [
-                    'changed' => [
-                        __('Enhanced anchor sanitization with improved security', 'menu-anchor-manager'),
-                        __('Case sensitivity preserved - anchors maintain original capitalization', 'menu-anchor-manager'),
-                        __('Added comprehensive WordPress plugin headers', 'menu-anchor-manager')
-                    ],
-                    'security' => [
-                        __('Protection against path traversal and query parameter injection', 'menu-anchor-manager'),
-                        __('Strengthened input validation and character filtering', 'menu-anchor-manager')
-                    ]
-                ]
-            ],
-            '1.0.0' => [
-                'date' => '2025-07-24',
-                'changes' => [
-                    'added' => [
-                        __('Initial release with dynamic anchor management', 'menu-anchor-manager'),
-                        __('Domain-driven architecture with clean separation of concerns', 'menu-anchor-manager'),
-                        __('Automatic URL generation that updates when page slugs change', 'menu-anchor-manager'),
-                        __('Multi-language support (English, French, Spanish)', 'menu-anchor-manager'),
-                        __('Security features with input sanitization and XSS protection', 'menu-anchor-manager')
-                    ]
-                ]
-            ]
-        ];
-    }
-    
-    /**
      * Enqueue admin styles for better UX
      */
     public function enqueueAdminStyles($hook): void {
-        if ($hook !== 'nav-menus.php' && $hook !== 'plugins.php') {
+        if ($hook !== 'nav-menus.php') {
             return;
         }
         
@@ -611,154 +522,9 @@ class MenuAnchorManager {
         .field-anchor input {
             margin-top: 5px;
         }
-        
-        /* Changelog modal styles */
-        #menu-anchor-changelog-modal {
-            display: none;
-            position: fixed;
-            z-index: 999999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        #menu-anchor-changelog-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border-radius: 5px;
-        }
-        
-        .menu-anchor-changelog-close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .menu-anchor-changelog-close:hover {
-            color: #000;
-        }
-        
-        .changelog-version {
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-        }
-        
-        .changelog-version h3 {
-            margin: 0;
-            color: #23282d;
-        }
-        
-        .changelog-date {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        
-        .changelog-changes ul {
-            margin: 5px 0;
-        }
-        
-        .changelog-changes .change-type {
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.85em;
-            color: #0073aa;
-        }
-        
-        /* Update notification styles */
-        .menu-anchor-update-notice {
-            background: #fff;
-            border-left: 4px solid #00a0d2;
-            box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-            margin: 5px 15px 2px;
-            padding: 1px 12px;
-        }
         ";
         
         wp_add_inline_style('nav-menu', $css);
-        
-        // Add JavaScript for changelog modal
-        if ($hook === 'plugins.php') {
-            $this->enqueueChangelogScript();
-        }
-    }
-    
-    /**
-     * Enqueue changelog JavaScript
-     */
-    private function enqueueChangelogScript(): void {
-        $changelog = $this->getChangelog();
-        
-        $js = "
-        window.MenuAnchorManager = {
-            showChangelog: function() {
-                const modal = document.createElement('div');
-                modal.id = 'menu-anchor-changelog-modal';
-                modal.innerHTML = `
-                    <div id='menu-anchor-changelog-content'>
-                        <span class='menu-anchor-changelog-close'>&times;</span>
-                        <h2>" . __('Menu Anchor Manager - Changelog', 'menu-anchor-manager') . "</h2>
-                        " . $this->generateChangelogHTML($changelog) . "
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                modal.style.display = 'block';
-                
-                // Close modal events
-                modal.querySelector('.menu-anchor-changelog-close').onclick = function() {
-                    document.body.removeChild(modal);
-                };
-                
-                modal.onclick = function(event) {
-                    if (event.target === modal) {
-                        document.body.removeChild(modal);
-                    }
-                };
-            }
-        };
-        ";
-        
-        wp_add_inline_script('jquery', $js);
-    }
-    
-    /**
-     * Generate HTML for changelog
-     */
-    private function generateChangelogHTML(array $changelog): string {
-        $html = '';
-        
-        foreach ($changelog as $version => $data) {
-            $html .= "<div class='changelog-version'>";
-            $html .= "<h3>Version {$version}</h3>";
-            $html .= "<div class='changelog-date'>" . sprintf(__('Released: %s', 'menu-anchor-manager'), $data['date']) . "</div>";
-            
-            foreach ($data['changes'] as $type => $changes) {
-                $html .= "<div class='changelog-changes'>";
-                $html .= "<div class='change-type'>" . ucfirst($type) . "</div>";
-                $html .= "<ul>";
-                foreach ($changes as $change) {
-                    $html .= "<li>" . esc_html($change) . "</li>";
-                }
-                $html .= "</ul>";
-                $html .= "</div>";
-            }
-            
-            $html .= "</div>";
-        }
-        
-        return $html;
     }
     
     /**
