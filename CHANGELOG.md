@@ -10,6 +10,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.2.3] - 2025-07-24
+
+### Improved
+- **Code cleanup**: Removed duplicate changelog functionality in favor of GitHub integration
+- **Simplified architecture**: Eliminated unused modal scripts and CSS for changelog display
+- **Better user experience**: Direct links to GitHub changelog instead of modal popup
+- **Performance**: Reduced plugin size by removing unnecessary JavaScript and CSS
+
+### Changed
+- **Changelog links**: Now redirect directly to GitHub CHANGELOG.md for the specific version
+- **Support links**: Consolidated all support to GitHub Issues
+- **Admin interface**: Simplified plugin row links with direct GitHub integration
+
+### Removed
+- Internal changelog modal system (redundant with GitHub)
+- Modal JavaScript and CSS styles
+- `getChangelog()`, `enqueueChangelogScript()`, and `generateChangelogHTML()` methods
+- Duplicate changelog maintenance burden
+
+### Technical
+- Fixed PHP syntax error in plugin links (backticks → proper concatenation)
+- Streamlined `enqueueAdminStyles()` to only handle menu styles
+- Reduced code complexity and maintenance overhead
+
 ## [1.2.2] - 2025-07-24
 
 ### Fixed
