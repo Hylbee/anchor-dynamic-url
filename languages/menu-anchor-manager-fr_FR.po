@@ -1,0 +1,86 @@
+# Copyright (C) 2025 Menu Anchor Manager
+# This file is distributed under the same license as the Menu Anchor Manager package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Menu Anchor Manager 1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-24 10:00+0000\n"
+"PO-Revision-Date: 2025-07-24 10:00+0000\n"
+"Last-Translator: Votre Nom <email@example.com>\n"
+"Language-Team: Français\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: menu-anchor-manager.php:95
+msgid "Anchor (optional)"
+msgstr "Ancre (optionnel)"
+
+#: menu-anchor-manager.php:100
+msgid "e.g: contact-section"
+msgstr "ex : section-contact"
+
+#: menu-anchor-manager.php:103
+msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
+msgstr "Ajoute #ancre à l'URL. Se met à jour automatiquement si le slug de la page change."
+
+#: menu-anchor-manager.php:155
+msgid "Add dynamic anchors to WordPress menu items with automatic URL updates"
+msgstr "Ajoute des ancres dynamiques aux éléments de menu WordPress avec mise à jour automatique des URLs"
+
+#: menu-anchor-manager.php:165
+msgid "View Changelog"
+msgstr "Voir le changelog"
+
+#: menu-anchor-manager.php:166
+msgid "Support"
+msgstr "Support"
+
+#: menu-anchor-manager.php:167
+msgid "GitHub"
+msgstr "GitHub"
+
+#: menu-anchor-manager.php:175
+msgid "Configure Menus"
+msgstr "Configurer les menus"
+
+#: menu-anchor-manager.php:285
+msgid "Menu Anchor Manager - Changelog"
+msgstr "Menu Anchor Manager - Journal des modifications"
+
+#: menu-anchor-manager.php:305
+msgid "Released: %s"
+msgstr "Publié le : %s"
+
+# Changelog entries
+msgid "Enhanced anchor sanitization with improved security"
+msgstr "Amélioration de la validation des ancres avec sécurité renforcée"
+
+msgid "Case sensitivity preserved - anchors maintain original capitalization"
+msgstr "Sensibilité à la casse préservée - les ancres conservent la capitalisation originale"
+
+msgid "Added comprehensive WordPress plugin headers"
+msgstr "Ajout d'en-têtes WordPress complets pour le plugin"
+
+msgid "Protection against path traversal and query parameter injection"
+msgstr "Protection contre l'injection de paramètres et la traversée de chemins"
+
+msgid "Strengthened input validation and character filtering"
+msgstr "Validation des entrées et filtrage des caractères renforcés"
+
+msgid "Initial release with dynamic anchor management"
+msgstr "Version initiale avec gestion dynamique des ancres"
+
+msgid "Domain-driven architecture with clean separation of concerns"
+msgstr "Architecture domain-driven avec séparation claire des responsabilités"
+
+msgid "Automatic URL generation that updates when page slugs change"
+msgstr "Génération automatique d'URLs qui se mettent à jour quand les slugs changent"
+
+msgid "Multi-language support (English, French, Spanish)"
+msgstr "Support multi-langues (anglais, français, espagnol)"
+
+msgid "Security features with input sanitization and XSS protection"
+msgstr "Fonctionnalités de sécurité avec validation des entrées et protection XSS"
