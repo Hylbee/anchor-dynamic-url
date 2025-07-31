@@ -54,33 +54,26 @@ msgstr ""
 msgid "Released: %s"
 msgstr ""
 
-# Changelog entries
-msgid "Enhanced anchor sanitization with improved security"
+#: includes/elementor-integration.php:127
+msgid "Target Anchor"
 msgstr ""
 
-msgid "Case sensitivity preserved - anchors maintain original capitalization"
+#: includes/elementor-integration.php:132
+msgid "ID of the target element for scrolling (without #). Leave blank to use the normal link."
 msgstr ""
 
-msgid "Added comprehensive WordPress plugin headers"
+#: includes/elementor-integration.php:217
+msgid "ID Anchor Menu"
 msgstr ""
 
-msgid "Protection against path traversal and query parameter injection"
+#: includes/elementor-integration.php:225
+msgid "Element ID"
 msgstr ""
 
-msgid "Strengthened input validation and character filtering"
+#: includes/elementor-integration.php:227
+msgid "my-section"
 msgstr ""
 
-msgid "Initial release with dynamic anchor management"
-msgstr ""
-
-msgid "Domain-driven architecture with clean separation of concerns"
-msgstr ""
-
-msgid "Automatic URL generation that updates when page slugs change"
-msgstr ""
-
-msgid "Multi-language support (English, French, Spanish)"
-msgstr ""
-
-msgid "Security features with input sanitization and XSS protection"
+#: includes/elementor-integration.php:228
+msgid "Define an ID for this element that can be targeted from menus or other elements."
 msgstr ""

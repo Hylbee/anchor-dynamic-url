@@ -5,7 +5,7 @@ A WordPress plugin that adds dynamic anchor management to menu items with automa
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.2.3-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
+[![Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
 
 ## Description
 
@@ -20,6 +20,7 @@ Menu Anchor Manager solves a common WordPress problem: broken anchor links when 
 - **Security-first approach** with input sanitization
 - **Case-sensitive anchors** preserved as entered
 - **Clean, intuitive interface** integrated into WordPress menus
+- **Elementor integration** for adding anchors to Elementor elements
 
 ### 🛡️ Security
 - Protection against path traversal and query parameter injection
@@ -75,6 +76,15 @@ msgfmt menu-anchor-manager-fr_FR.po -o menu-anchor-manager-fr_FR.mo
 5. Save the menu
 
 The plugin will automatically generate the URL: `https://yoursite.com/page#contact-section`
+
+### Elementor Integration
+1. Edit an Elementor page
+2. Select any element that supports URL (e.g., buttons, links, titles, etc.)
+3. In the element settings, find the **"URL"** field
+4. Click to **"⚙️"** to open URL options
+5. Enter your anchor in the **"Target Anchor"** field (e.g., `contact-section`)
+6. Save the element
+7. The anchor will be applied to the element.
 
 ### Advanced Usage
 

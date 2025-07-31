@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.3.0] - 2025-07-31
+
+### Added
+- **Elementor Integration**: Added anchor support for Elementor elements
+  - New input field for all elements with URL controls
+  - Supports both Elementor's native ID and custom anchors
+  - Supports all URL types (internal, external, custom)
+
 ## [1.2.3] - 2025-07-24
 
 ### Improved

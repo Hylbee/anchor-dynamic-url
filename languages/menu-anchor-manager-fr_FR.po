@@ -54,33 +54,26 @@ msgstr "Menu Anchor Manager - Journal des modifications"
 msgid "Released: %s"
 msgstr "Publié le : %s"
 
-# Changelog entries
-msgid "Enhanced anchor sanitization with improved security"
-msgstr "Amélioration de la validation des ancres avec sécurité renforcée"
+#: includes/elementor-integration.php:127
+msgid "Target Anchor"
+msgstr "Ancre Cible"
 
-msgid "Case sensitivity preserved - anchors maintain original capitalization"
-msgstr "Sensibilité à la casse préservée - les ancres conservent la capitalisation originale"
+#: includes/elementor-integration.php:132
+msgid "ID of the target element for scrolling (without #). Leave blank to use the normal link."
+msgstr "ID de l'élément cible pour le défilement (sans #). Laissez vide pour utiliser le lien normal."
 
-msgid "Added comprehensive WordPress plugin headers"
-msgstr "Ajout d'en-têtes WordPress complets pour le plugin"
+#: includes/elementor-integration.php:217
+msgid "ID Anchor Menu"
+msgstr "ID Ancre Menu"
 
-msgid "Protection against path traversal and query parameter injection"
-msgstr "Protection contre l'injection de paramètres et la traversée de chemins"
+#: includes/elementor-integration.php:225
+msgid "Element ID"
+msgstr "ID Élément"
 
-msgid "Strengthened input validation and character filtering"
-msgstr "Validation des entrées et filtrage des caractères renforcés"
+#: includes/elementor-integration.php:227
+msgid "my-section"
+msgstr "ma-section"
 
-msgid "Initial release with dynamic anchor management"
-msgstr "Version initiale avec gestion dynamique des ancres"
-
-msgid "Domain-driven architecture with clean separation of concerns"
-msgstr "Architecture domain-driven avec séparation claire des responsabilités"
-
-msgid "Automatic URL generation that updates when page slugs change"
-msgstr "Génération automatique d'URLs qui se mettent à jour quand les slugs changent"
-
-msgid "Multi-language support (English, French, Spanish)"
-msgstr "Support multi-langues (anglais, français, espagnol)"
-
-msgid "Security features with input sanitization and XSS protection"
-msgstr "Fonctionnalités de sécurité avec validation des entrées et protection XSS"
+#: includes/elementor-integration.php:228
+msgid "Define an ID for this element that can be targeted from menus or other elements."
+msgstr "Définir un ID pour cet élément qui peut être ciblé depuis les menus ou autres éléments."

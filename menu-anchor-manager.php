@@ -3,7 +3,7 @@
  * Plugin Name: Menu Anchor Manager
  * Plugin URI: https://www.hylbee.fr/
  * Description: Add dynamic anchors to WordPress menu items with automatic URL updates
- * Version: 1.2.3
+ * Version: 1.3.0
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MENU_ANCHOR_MANAGER_VERSION', '1.2.3');
+define('MENU_ANCHOR_MANAGER_VERSION', '1.3.0');
 define('MENU_ANCHOR_MANAGER_FILE', __FILE__);
 define('MENU_ANCHOR_MANAGER_PATH', plugin_dir_path(__FILE__));
 define('MENU_ANCHOR_MANAGER_URL', plugin_dir_url(__FILE__));
@@ -479,6 +479,18 @@ class MenuAnchorManager {
         
         // Add plugin action links
         add_filter('plugin_action_links_' . plugin_basename(MENU_ANCHOR_MANAGER_FILE), [$this, 'addActionLinks']);
+
+        // Initialize includes
+        $this->initIncludes();
+    }
+
+    private function initIncludes(): void {
+        // Include additional files if needed
+
+        // Elementor integration avec diagnostic
+        if (file_exists(MENU_ANCHOR_MANAGER_PATH . 'includes/elementor-integration.php')) {
+			require_once MENU_ANCHOR_MANAGER_PATH . 'includes/elementor-integration.php';
+		}
     }
     
     /**
