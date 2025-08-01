@@ -1,15 +1,15 @@
-# Menu Anchor Manager
+# Anchor Dynamic URL
 
 A WordPress plugin that adds dynamic anchor management to menu items with automatic URL updates when page slugs change.
 
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)](https://github.com/Hylbee/menu-anchor-manager/releases)
+[![Version](https://img.shields.io/badge/Version-1.3.1-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
 
 ## Description
 
-Menu Anchor Manager solves a common WordPress problem: broken anchor links when page slugs change. Instead of manually writing URLs like `https://example.com/contact#coordinates`, you simply select a page and add an anchor. The plugin automatically generates the correct URL and updates it if the page slug changes.
+Anchor Dynamic URL solves a common WordPress problem: broken anchor links when page slugs change. Instead of manually writing URLs like `https://example.com/contact#coordinates`, you simply select a page and add an anchor. The plugin automatically generates the correct URL and updates it if the page slug changes.
 
 ## Features
 
@@ -45,25 +45,25 @@ Menu Anchor Manager solves a common WordPress problem: broken anchor links when 
 
 ### From WordPress Admin
 1. Go to **Plugins > Add New**
-2. Search for "Menu Anchor Manager"
+2. Search for "Anchor Dynamic URL"
 3. Install and activate the plugin
 
 ### Manual Installation
 1. Download the plugin zip file
-2. Upload to `/wp-content/plugins/menu-anchor-manager/`
+2. Upload to `/wp-content/plugins/anchor-dynamic-url/`
 3. Activate through the WordPress plugins screen
 
 ### From Source
 ```bash
 # Clone the repository
-git clone https://github.com/Hylbee/menu-anchor-manager.git
+git clone https://github.com/Hylbee/anchor-dynamic-url.git
 
 # Copy to WordPress plugins directory
-cp -r menu-anchor-manager /path/to/wordpress/wp-content/plugins/
+cp -r anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
 
 # Generate translation files (optional)
-cd menu-anchor-manager/languages
-msgfmt menu-anchor-manager-fr_FR.po -o menu-anchor-manager-fr_FR.mo
+cd anchor-dynamic-url/languages
+msgfmt anchor-dynamic-url-fr_FR.po -o anchor-dynamic-url-fr_FR.mo
 ```
 
 ## Usage
@@ -117,15 +117,15 @@ The plugin follows domain-driven design principles:
 
 ```
 ┌─────────────────────┐
-│   MenuAnchorManager │  ← Main orchestrator
+│ AnchorDynamicUrlManager │  ← Main orchestrator
 └─────────┬───────────┘
           │
 ┌─────────▼───────────┐
-│  MenuAnchorService  │  ← Business logic
+│    AnchorService    │  ← Business logic
 └─────────┬───────────┘
           │
 ┌─────────▼───────────┐
-│MenuAnchorRepository │  ← Data persistence
+│  AnchorRepository   │  ← Data persistence
 └─────────┬───────────┘
           │
 ┌─────────▼───────────┐
@@ -135,10 +135,10 @@ The plugin follows domain-driven design principles:
 
 ### Component Responsibilities
 
-- **`MenuItemAnchor`** - Domain entity containing business rules
-- **`MenuAnchorRepository`** - Data access layer using WordPress meta API
-- **`MenuAnchorService`** - Application logic and UI management
-- **`MenuAnchorManager`** - Main controller and WordPress integration
+- **`AnchorItem`** - Domain entity containing business rules
+- **`AnchorRepository`** - Data access layer using WordPress meta API
+- **`AnchorService`** - Application logic and UI management
+- **`AnchorDynamicUrlManager`** - Main controller and WordPress integration
 
 ## Requirements
 
@@ -161,10 +161,10 @@ The plugin follows domain-driven design principles:
 
 ```bash
 # Clone repository
-git clone https://github.com/Hylbee/menu-anchor-manager.git
+git clone https://github.com/Hylbee/anchor-dynamic-url.git
 
 # Create symbolic link in WordPress
-ln -s /path/to/menu-anchor-manager /path/to/wordpress/wp-content/plugins/
+ln -s /path/to/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
 
 # Install development dependencies (if any)
 composer install --dev
@@ -239,16 +239,16 @@ A: Yes, the plugin is fully translatable and works with WPML, Polylang, and othe
 
 ## Support
 
-- **Documentation**: [https://github.com/Hylbee/menu-anchor-manager/blob/main/README.md](https://github.com/Hylbee/menu-anchor-manager/blob/main/README.md)
-- **Support Forum**: [https://github.com/Hylbee/menu-anchor-manager/issues](https://github.com/Hylbee/menu-anchor-manager/issues)
-- **Issues**: [GitHub Issues](https://github.com/Hylbee/menu-anchor-manager/issues)
+- **Documentation**: [https://github.com/Hylbee/anchor-dynamic-url/blob/main/README.md](https://github.com/Hylbee/anchor-dynamic-url/blob/main/README.md)
+- **Support Forum**: [https://github.com/Hylbee/anchor-dynamic-url/issues](https://github.com/Hylbee/anchor-dynamic-url/issues)
+- **Issues**: [GitHub Issues](https://github.com/Hylbee/anchor-dynamic-url/issues)
 
 ## License
 
 This plugin is licensed under the [GPL v2 or later](https://www.gnu.org/licenses/gpl-2.0.html).
 
 ```
-Menu Anchor Manager - WordPress Plugin
+Anchor with dynamic URL - WordPress Plugin
 Copyright (C) 2025 Hylbee
 
 This program is free software; you can redistribute it and/or modify

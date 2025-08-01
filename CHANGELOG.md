@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Menu Anchor Manager will be documented in this file.
+All notable changes to Anchor Dynamic URL will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,6 +9,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 - Nothing yet
+
+## [1.3.1] - 2025-01-01
+
+### Fixed
+- **WordPress Coding Standards**: Fixed all Plugin Checker warnings and errors
+  - Fixed text domain mismatches (changed 'elementor' to 'anchor-dynamic-url')
+  - Added proper input validation and sanitization for `$_SERVER['REQUEST_URI']`
+  - Fixed missing nonce verification in menu save operations
+  - Replaced restricted `date()` function with WordPress `wp_date()`
+  - Fixed slow database queries by removing inefficient meta_query usage
+  - Added proper escaping for all output functions
+
+### Improved
+- **Security**: Enhanced input validation and sanitization throughout the plugin
+  - Added `wp_unslash()` and `sanitize_text_field()` for all user inputs
+  - Implemented proper nonce verification for form submissions
+  - Added `isset()` checks for superglobal array access
+- **Performance**: Optimized database operations
+  - Replaced slow `meta_query` with direct WordPress functions
+  - Improved plugin uninstall process for better performance
+- **Code Quality**: Enhanced error handling and debugging
+  - Added conditional `error_log()` only in WP_DEBUG mode
+  - Added proper phpcs ignore comments for development functions
+
+### Enhanced
+- **Internationalization**: Complete translation system overhaul
+  - Added comprehensive translator comments for all strings
+  - Fixed missing translation strings throughout the plugin
+  - Updated POT file with all current translatable strings
+  - Completed French translation (fr_FR) with all new strings
+  - Removed discouraged `load_plugin_textdomain()` (WordPress handles automatically)
+- **Documentation**: Added extensive English comments throughout codebase
+  - Added detailed function and class documentation
+  - Explained complex logic with inline comments
+  - Added parameter descriptions and return types
+  - Enhanced code readability for future developers
+
+### Technical
+- **WordPress Compliance**: Full compliance with WordPress Plugin Directory standards
+- **Plugin Checker**: Resolved all warnings and errors from WordPress Plugin Checker
+- **Translation Ready**: Plugin now fully ready for WordPress.org translation system
+- **Maintainability**: Improved code organization with comprehensive documentation
 
 ## [1.3.0] - 2025-07-31
 
@@ -57,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical
 - Introduced `AnchorSanitizer` utility class with static `sanitize()` method
-- Removed duplicated sanitization code from `MenuItemAnchor` and `MenuAnchorService`
+- Removed duplicated sanitization code from `AnchorItem` and `AnchorService`
 - Improved separation of concerns with dedicated utility classes
 
 ## [1.2.1] - 2025-07-24
@@ -92,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **User experience**: Seamless update notifications and one-click updates
 
 ### Technical
-- Added `MenuAnchorUpdater` class with full GitHub integration
+- Added `AnchorDynamicUrlUpdater` class with full GitHub integration
 - Implemented WordPress update API compatibility
 - Enhanced error handling and network request management
 - Added comprehensive plugin metadata support
@@ -125,10 +167,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Core functionality**: Dynamic anchor management for WordPress menu items
 - **Domain-driven architecture** with clean separation of concerns:
-  - `MenuItemAnchor` entity for business logic
-  - `MenuAnchorRepository` for data persistence
-  - `MenuAnchorService` for application logic
-  - `MenuAnchorManager` as main orchestrator
+  - `AnchorItem` entity for business logic
+  - `AnchorRepository` for data persistence
+  - `AnchorService` for application logic
+  - `AnchorDynamicUrlManager` as main orchestrator
 - **Admin interface**: Custom anchor field in menu item edit form
 - **Automatic URL generation**: Dynamic URLs that update when page slugs change
 - **Basic security features**:
@@ -208,10 +250,10 @@ Contributions are welcome! Please follow these guidelines:
 git clone [repository-url]
 
 # Install in WordPress plugins directory
-cp -r menu-anchor-manager /path/to/wordpress/wp-content/plugins/
+cp -r anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
 
 # Generate translation files
-msgfmt languages/menu-anchor-manager-fr_FR.po -o languages/menu-anchor-manager-fr_FR.mo
+msgfmt languages/anchor-dynamic-url-fr_FR.po -o languages/anchor-dynamic-url-fr_FR.mo
 ```
 
 ---

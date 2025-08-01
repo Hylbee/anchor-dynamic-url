@@ -1,0 +1,144 @@
+# Copyright (C) 2025 Hylbee
+# This file is distributed under the same license as the Menu Anchor Manager plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Anchor Dynamic URL 1.3.1\n"
+"Report-Msgid-Bugs-To: https://github.com/Hylbee/anchor-dynamic-url/issues\n"
+"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Domain: anchor-dynamic-url\n"
+
+#. translators: Error message when changelog cannot be fetched from GitHub
+#: menu-anchor-manager.php:211
+msgid "Unable to fetch changelog."
+msgstr ""
+
+#. translators: Message shown when no changelog data is available
+#: menu-anchor-manager.php:219
+msgid "No changelog available."
+msgstr ""
+
+#. translators: Message shown when a release has no notes
+#: menu-anchor-manager.php:228
+msgid "No release notes available."
+msgstr ""
+
+#. translators: 1: version number, 2: release date
+#: menu-anchor-manager.php:232
+msgid "Version %1$s - %2$s"
+msgstr ""
+
+#. translators: 1: version number, 2: update URL
+#: menu-anchor-manager.php:274
+msgid "Anchor Dynamic URL version %1$s is available. <a href=\"%2$s\">Update now</a>."
+msgstr ""
+
+#. translators: Label for the anchor input field in menu editor
+#: menu-anchor-manager.php:477
+msgid "Anchor (optional)"
+msgstr ""
+
+#. translators: Example placeholder text for anchor input field
+#: menu-anchor-manager.php:495
+msgid "e.g: contact-section"
+msgstr ""
+
+#. translators: Help text explaining what the anchor field does
+#: menu-anchor-manager.php:500
+msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
+msgstr ""
+
+#. translators: Link text for viewing the plugin changelog
+#: menu-anchor-manager.php:670
+msgid "View Changelog"
+msgstr ""
+
+#. translators: Link text for getting support
+#: menu-anchor-manager.php:673
+msgid "Support"
+msgstr ""
+
+#. translators: Link text for GitHub repository
+#: menu-anchor-manager.php:676
+msgid "GitHub"
+msgstr ""
+
+#. translators: Link text for configuring menus
+#: menu-anchor-manager.php:693
+msgid "Configure Menus"
+msgstr ""
+
+#. translators: Error message shown when WordPress version is too old
+#: menu-anchor-manager.php:770
+msgid "Anchor Dynamic URL requires WordPress 5.0 or higher."
+msgstr ""
+
+#. translators: Error message shown when PHP version is too old
+#: menu-anchor-manager.php:777
+msgid "Anchor Dynamic URL requires PHP 7.4 or higher."
+msgstr ""
+
+#. translators: Button tooltip text for link options
+#. translators: Button aria-label for link options
+#: includes/elementor-integration.php:123
+#: includes/elementor-integration.php:126
+msgid "Link Options"
+msgstr ""
+
+#. translators: Label for external link checkbox
+#: includes/elementor-integration.php:143
+msgid "Open in new window"
+msgstr ""
+
+#. translators: Label for nofollow link checkbox
+#: includes/elementor-integration.php:154
+msgid "Add nofollow"
+msgstr ""
+
+#. translators: Label for custom attributes input field
+#: includes/elementor-integration.php:164
+msgid "Custom Attributes"
+msgstr ""
+
+#. translators: Placeholder text for custom attributes input
+#: includes/elementor-integration.php:169
+msgid "key|value"
+msgstr ""
+
+#. translators: Label for the anchor target input field
+#: includes/elementor-integration.php:188
+msgid "Target Anchor"
+msgstr ""
+
+#. translators: Placeholder text for anchor target input
+#: includes/elementor-integration.php:194
+msgid "section-id"
+msgstr ""
+
+#. translators: Help text explaining how to use the anchor target field
+#: includes/elementor-integration.php:203
+msgid "ID of the target element for scrolling (without #). Leave blank to use the normal link."
+msgstr ""
+
+#: includes/elementor-integration.php:234
+msgid "ID Anchor Menu"
+msgstr ""
+
+#: includes/elementor-integration.php:248
+msgid "Element ID"
+msgstr ""
+
+#: includes/elementor-integration.php:251
+msgid "my-section"
+msgstr ""
+
+#: includes/elementor-integration.php:252
+msgid "Define an ID for this element that can be targeted from menus or other elements."
+msgstr ""
