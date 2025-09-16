@@ -2,8 +2,8 @@
 Tags: menu, anchor, url, dynamic, security
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.3.1
-Version: 1.3.1
+Stable tag: 1.3.2
+Version: 1.3.2
 Requires PHP: 7.4
 Author: Hylbee
 License: GPLv2 or later
@@ -52,7 +52,11 @@ Yes, all anchor inputs are sanitized and validated to prevent XSS attacks and en
 
 == Changelog ==
 
-= 1.3.1 - 2025-01-01 =
+= 1.3.2 - 2025-09-15 =
+* Fixed: Removed post-installation cleanup handling from AnchorDynamicUrlUpdater class
+* Removed: Add anchor ID control to all elements (Advanced tab) - this was causing confusion
+
+= 1.3.1 - 2025-08-01 =
 * Fixed: WordPress Coding Standards compliance - resolved all Plugin Checker warnings
 * Fixed: Text domain mismatches (changed 'elementor' to 'menu-anchor-manager')
 * Fixed: Input validation and sanitization for $_SERVER['REQUEST_URI']

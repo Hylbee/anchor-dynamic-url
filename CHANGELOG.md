@@ -10,7 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
-## [1.3.1] - 2025-01-01
+## [1.3.2] - 2025-09-16
+
+### Fixed
+- **Critical Security Fix**: Removed dangerous `afterInstall` function that was causing file system corruption
+  - Fixed issue where the plugin would randomly move and deactivate other WordPress plugins
+  - Removed erroneous `upgrader_post_install` filter hook that was interfering with WordPress core update system
+  - Eliminated file movement operations that could corrupt plugin installations
+
+### Removed
+- Add anchor ID control to all elements (Advanced tab) 
+  - Removed due to duplicate functionality with Elementor's native ID field
+  - Simplified user interface by avoiding redundancy
+
+## [1.3.1] - 2025-08-01
 
 ### Fixed
 - **WordPress Coding Standards**: Fixed all Plugin Checker warnings and errors
