@@ -395,13 +395,6 @@ add_filter('elementor/widget/render_content', function($content, $widget) {
 }, 10, 2); // Priority 10, accept 2 parameters (content, widget)
 
 /**
- * Add anchor ID control to all elements
- * Hook into the common element's style section to add our anchor ID control
- * This ensures all Elementor elements (sections, columns, widgets) get the anchor ID option
- */
-add_action('elementor/element/common/_section_style/after_section_end', 'menu_anchor_add_id_control', 10, 2);
-
-/**
  * Frontend functionality: modify elements before render
  * Hook into widget rendering to add anchor IDs to elements on the frontend
  * This makes elements targetable by anchor links
