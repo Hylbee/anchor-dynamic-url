@@ -290,44 +290,6 @@ add_action('elementor/init', function() {
 });
 
 /**
- * Add anchor ID control to all elements (Advanced tab)
- * This function adds a custom section in the Advanced tab of all Elementor elements
- * allowing users to set an ID that can be targeted by anchor links
- * 
- * @param object $element The Elementor element instance
- * @param array $args Additional arguments passed by the hook
- */
-function menu_anchor_add_id_control($element, $args) {
-    // Start a new controls section in the Advanced tab
-    $element->start_controls_section(
-        'menu_anchor_id_section', // Section ID
-        [
-            /* translators: Section title in Elementor Advanced tab */
-            'label' => __('ID Anchor Menu', 'anchor-dynamic-url'), // Section title
-            'tab' => \Elementor\Controls_Manager::TAB_ADVANCED, // Place in Advanced tab
-        ]
-    );
-    
-    // Add the anchor ID text input control
-    $element->add_control(
-        'anchor_id', // Control ID
-        [
-            /* translators: Label for element ID input field */
-            'label' => __('Element ID', 'anchor-dynamic-url'), // Field label
-            'type' => \Elementor\Controls_Manager::TEXT, // Text input type
-            /* translators: Placeholder text for element ID input field */
-            'placeholder' => __('my-section', 'anchor-dynamic-url'), // Placeholder text
-            /* translators: Help text for element ID input field */
-            'description' => __('Define an ID for this element that can be targeted from menus or other elements.', 'anchor-dynamic-url'), // Help text
-            'frontend_available' => true, // Make available to frontend JavaScript
-        ]
-    );
-    
-    // End the controls section
-    $element->end_controls_section();
-}
-
-/**
  * Modify element before render - simplified approach
  * This function runs before each Elementor element is rendered on the frontend
  * It adds the anchor ID as an HTML id attribute to make elements targetable
