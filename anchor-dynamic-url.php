@@ -72,8 +72,6 @@ class AnchorDynamicUrlUpdater {
         add_filter('pre_set_site_transient_update_plugins', [$this, 'checkForUpdate']);
         // Handle plugin information popup in admin when "View details" is clicked
         add_filter('plugins_api', [$this, 'pluginPopup'], 10, 3);
-        // Handle post-installation cleanup and activation
-        add_filter('upgrader_post_install', [$this, 'afterInstall'], 10, 3);
         // Show update notification in admin dashboard
         add_action('admin_init', [$this, 'showUpgradeNotification']);
     }
@@ -239,23 +237,6 @@ class AnchorDynamicUrlUpdater {
         $changelog .= '</div>';
         
         return $changelog;
-    }
-    
-    /**
-     * Handle post-installation cleanup
-     */
-    public function afterInstall(bool $response, array $hook_extra, array $result): bool {
-        global $wp_filesystem;
-        
-        $install_directory = plugin_dir_path($this->plugin_file);
-        $wp_filesystem->move($result['destination'], $install_directory);
-        $result['destination'] = $install_directory;
-        
-        if ($this->plugin_file) {
-            activate_plugin($this->plugin_file);
-        }
-        
-        return $response;
     }
     
     /**
