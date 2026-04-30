@@ -44,18 +44,16 @@ spl_autoload_register(
 		$kebab    = ltrim( strtolower( preg_replace( '/([A-Z])/', '-$1', $class_name ) ), '-' );
 		$filename = 'class-' . $kebab . '.php';
 
-		// Short-name overrides for existing files whose names don't match the full class name.
+		// All class files live flat in includes/ — no sub-directories.
+		// Short-name overrides for files whose names don't match the full class name.
 		$overrides = array(
-			'plugin/class-anchor-dynamic-url-manager.php'  => 'plugin/class-anchor-manager.php',
-			'admin/class-anchor-dynamic-url-updater.php'   => 'admin/class-anchor-updater.php',
+			'class-anchor-dynamic-url-manager.php' => 'class-anchor-manager.php',
+			'class-anchor-dynamic-url-updater.php' => 'class-anchor-updater.php',
 		);
 
-		$relative_path = $sub_dir . $filename;
-		if ( isset( $overrides[ $relative_path ] ) ) {
-			$relative_path = $overrides[ $relative_path ];
-		}
+		$resolved = isset( $overrides[ $filename ] ) ? $overrides[ $filename ] : $filename;
 
-		$file_path = ANCHOR_DYNAMIC_URL_PATH . 'includes/' . $relative_path;
+		$file_path = ANCHOR_DYNAMIC_URL_PATH . 'includes/' . $resolved;
 
 		if ( file_exists( $file_path ) ) {
 			require_once $file_path;
