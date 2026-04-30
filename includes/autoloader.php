@@ -40,8 +40,8 @@ spl_autoload_register(
 		$class_name = array_pop( $parts );
 		$sub_dir    = ! empty( $parts ) ? strtolower( implode( '/', $parts ) ) . '/' : '';
 
-		// Convert CamelCase to kebab-case.
-		$kebab    = strtolower( preg_replace( '/(?<!^)[A-Z]/', '-$0', $class_name ) );
+		// Convert CamelCase to kebab-case (e.g. AnchorItem → anchor-item).
+		$kebab    = ltrim( strtolower( preg_replace( '/([A-Z])/', '-$1', $class_name ) ), '-' );
 		$filename = 'class-' . $kebab . '.php';
 
 		// Short-name overrides for existing files whose names don't match the full class name.
