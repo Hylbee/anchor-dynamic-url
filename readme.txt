@@ -1,5 +1,5 @@
 === Anchor Dynamic URL ===
-Tags: menu, anchor, url, dynamic, security
+Tags: menu, anchor, url, dynamic, security, elementor
 Requires at least: 5.0
 Tested up to: 6.7
 Stable tag: 1.4.0
@@ -11,13 +11,20 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 This plugin allows you to add a anchor to menu element with a dynamic URL for WordPress menu items and for Elementor element.
 
 == Description ==
-This plugin allows you to add a anchor to menu element with a dynamic URL for WordPress menu items. It automatically updates the URL of the anchor when the page is updated, ensuring that the anchor always points to the correct location.
-It also sanitizes the anchor to prevent security issues.
+Anchor Dynamic URL lets you add anchor targets to WordPress menu items with dynamic URLs that update automatically when page slugs change. It also extends Elementor with a dedicated "Target Anchor" field on every URL control, supporting widgets, sections, columns, and containers with link wrapping.
 
-Added anchor support for Elementor elements
-  - New input field for all elements with URL controls
-  - Supports both Elementor's native ID and custom anchors
-  - Supports all URL types (internal, external, custom)
+All anchor inputs are strictly sanitized (letters, numbers, hyphens, underscores only) and the plugin follows WordPress coding standards throughout.
+
+**WordPress menu features**
+* "Anchor (optional)" field on every menu item
+* URL auto-updates when the linked page slug changes
+* Anchor is stripped on delete / deactivation
+
+**Elementor integration**
+* "Target Anchor" field added to every URL control in the editor
+* Supports widgets, sections, columns, and linked containers (`<a>` tag)
+* Works with internal URLs, external URLs, and empty `#` links
+* Output-buffer-safe rewriting with `ob_get_level()` verification
 
 == Installation ==
 
@@ -51,6 +58,15 @@ Yes, all anchor inputs are sanitized and validated to prevent XSS attacks and en
 3. Frontend anchor links in action
 
 == Changelog ==
+
+= 1.4.0 - 2025-09-16 =
+* Added: Elementor container link rewriting via output buffering (supports HTML tag = 'a' containers)
+* Added: Widget render_content filter to rewrite all URL controls in rendered HTML, including HTML-encoded URL variants
+* Added: Fallback template injection for Extended_URL_Control when Elementor template structure changes
+* Added: ob_get_level() safety guard to prevent output buffer corruption
+* Improved: anchor_target option injection via before_section_end for all existing URL controls
+* Security: Replaced preg_replace with preg_replace_callback for container link rewriting — prevents backreference injection
+* Security: Added current_user_can('edit_theme_options') check in save_anchor() alongside existing nonce verification
 
 = 1.3.2 - 2025-09-15 =
 * Fixed: Removed post-installation cleanup handling from AnchorDynamicUrlUpdater class

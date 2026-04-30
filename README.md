@@ -5,7 +5,7 @@ A WordPress plugin that adds dynamic anchor management to menu items with automa
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.3.2-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
+[![Version](https://img.shields.io/badge/Version-1.4.0-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
 
 ## Description
 
@@ -20,13 +20,15 @@ Anchor Dynamic URL solves a common WordPress problem: broken anchor links when p
 - **Security-first approach** with input sanitization
 - **Case-sensitive anchors** preserved as entered
 - **Clean, intuitive interface** integrated into WordPress menus
-- **Elementor integration** for adding anchors to Elementor elements
+- **Full Elementor integration**: widgets, sections, columns, and linked containers
 
 ### 🛡️ Security
 - Protection against path traversal and query parameter injection
 - XSS prevention through proper output escaping
-- Safe character filtering for URL anchors
-- Input validation and sanitization
+- Safe character filtering for URL anchors (`a-zA-Z0-9-_` only)
+- Input validation and sanitization on all user inputs
+- Nonce verification + capability check (`edit_theme_options`) on menu saves
+- `preg_replace_callback` used throughout to prevent regex backreference injection
 
 ### 🌍 Internationalization
 - **Multi-language support** out of the box
@@ -78,13 +80,19 @@ msgfmt anchor-dynamic-url-fr_FR.po -o anchor-dynamic-url-fr_FR.mo
 The plugin will automatically generate the URL: `https://yoursite.com/page#contact-section`
 
 ### Elementor Integration
+
+**Widgets, sections & columns**
 1. Edit an Elementor page
-2. Select any element that supports URL (e.g., buttons, links, titles, etc.)
-3. In the element settings, find the **"URL"** field
-4. Click to **"⚙️"** to open URL options
-5. Enter your anchor in the **"Target Anchor"** field (e.g., `contact-section`)
-6. Save the element
-7. The anchor will be applied to the element.
+2. Select any element that has a URL control (button, heading, icon, etc.)
+3. Open the URL field settings
+4. Enter your anchor in the **"Target Anchor"** field (e.g., `contact-section`)
+5. Save — the `#anchor` is appended to the URL at render time
+
+**Containers with link wrapping**
+1. Select a Container element
+2. Set **HTML Tag** to `a` and enter a URL in the link field
+3. Enter the anchor in the **"Target Anchor"** field
+4. The container's `href` is rewritten via output buffering at render time
 
 ### Advanced Usage
 
@@ -148,11 +156,11 @@ The plugin follows domain-driven design principles:
 
 ## Compatibility
 
-- ✅ **WordPress**: 5.0 - 6.4+ (tested)
+- ✅ **WordPress**: 5.0 - 6.7 (tested)
 - ✅ **PHP**: 7.4 - 8.3
 - ✅ **Multisite**: Single-site installations only
 - ✅ **Themes**: Compatible with all themes
-- ✅ **Page Builders**: Elementor, Gutenberg, etc.
+- ✅ **Elementor**: 3.5+ (uses `unregister`/`register` API)
 - ✅ **Caching**: Compatible with all major caching plugins
 
 ## Development

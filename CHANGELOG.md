@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.4.0] - 2025-09-16
+
+### Added
+- **Elementor container link support**: Anchor targets now work on containers configured with an HTML `<a>` tag (link wrapping), using output buffering to rewrite the generated `href` after render
+- **Elementor widget URL rewriting**: New `elementor/widget/render_content` filter rewrites all URL controls in rendered widget HTML, including support for HTML-encoded URLs (`&amp;` variants)
+- **Fallback template injection**: Extended URL control template now falls back to appending the anchor field at the end if the expected Elementor template structure changes after an Elementor update
+- **Output buffer safety**: `ob_get_level()` stored before buffering and verified before `ob_get_clean()` to prevent buffer corruption if another plugin interferes
+
+### Improved
+- **Elementor control options**: `anchor_target` option is now injected into existing URL controls via `elementor/element/before_section_end`, ensuring all widgets get the anchor field without requiring per-widget registration
+
+### Security
+- **Regex replacement hardening**: Replaced unsafe `preg_replace` with `preg_replace_callback` in Elementor container link rewriting — prevents potential backreference injection via `$1`/`\1` sequences in constructed replacement strings
+- **Capability check added**: `save_anchor()` now verifies `current_user_can('edit_theme_options')` in addition to nonce validation, preventing privilege escalation if a nonce were somehow obtained by a lower-privileged user
+
 ## [1.3.2] - 2025-09-16
 
 ### Fixed
