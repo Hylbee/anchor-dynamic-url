@@ -295,7 +295,7 @@ function menu_anchor_render_content( $content, $widget ) {
 
 	foreach ( $settings as $setting_value ) {
 		if ( ! is_array( $setting_value )
-			|| empty( $setting_value['url'] )
+			|| ! isset( $setting_value['url'] )
 			|| empty( $setting_value['anchor_target'] ) ) {
 			continue;
 		}
