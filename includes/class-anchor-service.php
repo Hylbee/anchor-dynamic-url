@@ -120,6 +120,11 @@ class AnchorService {
 			return;
 		}
 
+		// Ensure the current user can manage navigation menus.
+		if ( ! current_user_can( 'edit_theme_options' ) ) {
+			return;
+		}
+
 		// Check if anchor data was submitted for this menu item.
 		if ( ! isset( $_POST['menu-item-anchor'][ $menu_item_db_id ] ) ) {
 			return;

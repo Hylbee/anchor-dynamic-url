@@ -270,9 +270,11 @@ add_action( 'elementor/frontend/container/after_render', function( $element ) {
 			$new_url  = $base_url . '#' . $anchor_target;
 		}
 
-		$content = preg_replace(
+		$content = preg_replace_callback(
 			'/(<a[^>]*href=["\'])' . preg_quote( $original_url, '/' ) . '(["\'])/i',
-			'$1' . $new_url . '$2',
+			function( $matches ) use ( $new_url ) {
+				return $matches[1] . $new_url . $matches[2];
+			},
 			$content
 		);
 	}
