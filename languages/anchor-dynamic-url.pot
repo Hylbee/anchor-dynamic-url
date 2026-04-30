@@ -1,10 +1,10 @@
 # Copyright (C) 2025 Hylbee
-# This file is distributed under the same license as the Menu Anchor Manager plugin.
+# This file is distributed under the same license as the Anchor Dynamic URL plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Anchor Dynamic URL 1.3.2\n"
+"Project-Id-Version: Anchor Dynamic URL 1.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Hylbee/anchor-dynamic-url/issues\n"
-"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"POT-Creation-Date: 2026-04-30 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,130 +15,103 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Domain: anchor-dynamic-url\n"
 
+#. translators: %s: Required PHP version
+#: anchor-dynamic-url.php:35
+msgid "Anchor Dynamic URL requires PHP version %s or higher."
+msgstr ""
+
+#. translators: %s: Required WordPress version
+#: anchor-dynamic-url.php:51
+msgid "Anchor Dynamic URL requires WordPress version %s or higher."
+msgstr ""
+
+#. translators: Error message shown when WordPress version is too old (wp_die title)
+#: anchor-dynamic-url.php:124
+msgid "Anchor Dynamic URL requires WordPress 5.0 or higher."
+msgstr ""
+
+#. translators: Title of the wp_die error page on activation failure
+#: anchor-dynamic-url.php:125
+#: anchor-dynamic-url.php:135
+msgid "Plugin Activation Error"
+msgstr ""
+
+#. translators: Error message shown when PHP version is too old (wp_die title)
+#: anchor-dynamic-url.php:134
+msgid "Anchor Dynamic URL requires PHP 7.4 or higher."
+msgstr ""
+
 #. translators: Error message when changelog cannot be fetched from GitHub
-#: menu-anchor-manager.php:211
+#: includes/class-anchor-updater.php:247
 msgid "Unable to fetch changelog."
 msgstr ""
 
 #. translators: Message shown when no changelog data is available
-#: menu-anchor-manager.php:219
+#: includes/class-anchor-updater.php:255
 msgid "No changelog available."
 msgstr ""
 
 #. translators: Message shown when a release has no notes
-#: menu-anchor-manager.php:228
+#: includes/class-anchor-updater.php:264
 msgid "No release notes available."
 msgstr ""
 
 #. translators: 1: version number, 2: release date
-#: menu-anchor-manager.php:232
+#: includes/class-anchor-updater.php:268
 msgid "Version %1$s - %2$s"
 msgstr ""
 
 #. translators: 1: version number, 2: update URL
-#: menu-anchor-manager.php:274
+#: includes/class-anchor-updater.php:297
 msgid "Anchor Dynamic URL version %1$s is available. <a href=\"%2$s\">Update now</a>."
 msgstr ""
 
-#. translators: Label for the anchor input field in menu editor
-#: menu-anchor-manager.php:477
-msgid "Anchor (optional)"
-msgstr ""
-
-#. translators: Example placeholder text for anchor input field
-#: menu-anchor-manager.php:495
-msgid "e.g: contact-section"
-msgstr ""
-
-#. translators: Help text explaining what the anchor field does
-#: menu-anchor-manager.php:500
-msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
-msgstr ""
-
 #. translators: Link text for viewing the plugin changelog
-#: menu-anchor-manager.php:670
+#: includes/class-anchor-manager.php:158
 msgid "View Changelog"
 msgstr ""
 
 #. translators: Link text for getting support
-#: menu-anchor-manager.php:673
+#: includes/class-anchor-manager.php:161
 msgid "Support"
 msgstr ""
 
 #. translators: Link text for GitHub repository
-#: menu-anchor-manager.php:676
+#: includes/class-anchor-manager.php:164
 msgid "GitHub"
 msgstr ""
 
 #. translators: Link text for configuring menus
-#: menu-anchor-manager.php:693
+#: includes/class-anchor-manager.php:184
 msgid "Configure Menus"
 msgstr ""
 
-#. translators: Error message shown when WordPress version is too old
-#: menu-anchor-manager.php:770
-msgid "Anchor Dynamic URL requires WordPress 5.0 or higher."
+#. translators: Label for the anchor input field in menu editor
+#: includes/class-anchor-service.php:82
+msgid "Anchor (optional)"
 msgstr ""
 
-#. translators: Error message shown when PHP version is too old
-#: menu-anchor-manager.php:777
-msgid "Anchor Dynamic URL requires PHP 7.4 or higher."
+#. translators: Example placeholder text for anchor input field
+#: includes/class-anchor-service.php:92
+msgid "e.g: contact-section"
 msgstr ""
 
-#. translators: Button tooltip text for link options
-#. translators: Button aria-label for link options
-#: includes/elementor-integration.php:123
-#: includes/elementor-integration.php:126
-msgid "Link Options"
+#. translators: Help text explaining what the anchor field does
+#: includes/class-anchor-service.php:99
+msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
 msgstr ""
 
-#. translators: Label for external link checkbox
-#: includes/elementor-integration.php:143
-msgid "Open in new window"
-msgstr ""
-
-#. translators: Label for nofollow link checkbox
-#: includes/elementor-integration.php:154
-msgid "Add nofollow"
-msgstr ""
-
-#. translators: Label for custom attributes input field
-#: includes/elementor-integration.php:164
-msgid "Custom Attributes"
-msgstr ""
-
-#. translators: Placeholder text for custom attributes input
-#: includes/elementor-integration.php:169
-msgid "key|value"
-msgstr ""
-
-#. translators: Label for the anchor target input field
-#: includes/elementor-integration.php:188
+#. translators: Label for the anchor target input field in Elementor
+#: includes/elementor-integration.php:107
 msgid "Target Anchor"
 msgstr ""
 
-#. translators: Placeholder text for anchor target input
-#: includes/elementor-integration.php:194
+#. translators: Placeholder text for anchor target input in Elementor
+#: includes/elementor-integration.php:108
 msgid "section-id"
 msgstr ""
 
-#. translators: Help text explaining how to use the anchor target field
-#: includes/elementor-integration.php:203
+#. translators: Help text explaining how to use the anchor target field in Elementor
+#: includes/elementor-integration.php:110
 msgid "ID of the target element for scrolling (without #). Leave blank to use the normal link."
-msgstr ""
-
-#: includes/elementor-integration.php:234
-msgid "ID Anchor Menu"
-msgstr ""
-
-#: includes/elementor-integration.php:248
-msgid "Element ID"
-msgstr ""
-
-#: includes/elementor-integration.php:251
-msgid "my-section"
-msgstr ""
-
-#: includes/elementor-integration.php:252
-msgid "Define an ID for this element that can be targeted from menus or other elements."
 msgstr ""
