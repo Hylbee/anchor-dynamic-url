@@ -17,52 +17,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register PSR-4 autoloader for AnchorDynamicUrl namespace.
  *
+ * Derives the file path from the class name automatically, so new classes
+ * under AnchorDynamicUrl are resolved without touching this file.
+ * A short-name map covers existing files whose names differ from the
+ * full class name (e.g. class-anchor-manager.php instead of
+ * class-anchor-dynamic-url-manager.php).
+ *
  * @since 1.0.0
  */
 spl_autoload_register(
 	function ( $class ) {
-		// Base namespace for our plugin.
-		$namespace = 'AnchorDynamicUrl';
+		$namespace = 'AnchorDynamicUrl\\';
 
-		// Check if the class belongs to our namespace.
-		if ( strpos( $class, $namespace . '\\' ) !== 0 ) {
+		if ( strpos( $class, $namespace ) !== 0 ) {
 			return;
 		}
 
-		// Remove the base namespace from the class name.
-		$class_name = substr( $class, strlen( $namespace ) + 1 );
+		// Strip root namespace → e.g. "Plugin\AnchorDynamicUrlManager".
+		$relative = substr( $class, strlen( $namespace ) );
 
-		// Replace namespace separators with directory separators.
-		$class_path = str_replace( '\\', '/', $class_name );
+		$parts      = explode( '\\', $relative );
+		$class_name = array_pop( $parts );
+		$sub_dir    = ! empty( $parts ) ? strtolower( implode( '/', $parts ) ) . '/' : '';
 
-		// Convert class name to filename format (CamelCase to kebab-case).
-		$class_path = strtolower( preg_replace( '/([A-Z])/', '-$1', $class_path ) );
-		$class_path = ltrim( $class_path, '-' );
+		// Convert CamelCase to kebab-case.
+		$kebab    = strtolower( preg_replace( '/(?<!^)[A-Z]/', '-$0', $class_name ) );
+		$filename = 'class-' . $kebab . '.php';
 
-		// Map namespace paths to actual directory paths.
-		$namespace_mapping = array(
-			'entity/'     => 'class-anchor-item.php',
-			'utils/'      => 'class-anchor-sanitizer.php',
-			'repository/' => 'class-anchor-repository.php',
-			'service/'    => 'class-anchor-service.php',
-			'admin/'      => 'class-anchor-updater.php',
-			'plugin/'     => 'class-anchor-manager.php',
+		// Short-name overrides for existing files whose names don't match the full class name.
+		$overrides = array(
+			'plugin/class-anchor-dynamic-url-manager.php'  => 'plugin/class-anchor-manager.php',
+			'admin/class-anchor-dynamic-url-updater.php'   => 'admin/class-anchor-updater.php',
 		);
 
-		// Find the correct file path based on namespace mapping.
-		foreach ( $namespace_mapping as $namespace_dir => $filename ) {
-			if ( strpos( $class_path, $namespace_dir ) === 0 ) {
-				$file_path = ANCHOR_DYNAMIC_URL_PATH . 'includes/' . $filename;
-				break;
-			}
+		$relative_path = $sub_dir . $filename;
+		if ( isset( $overrides[ $relative_path ] ) ) {
+			$relative_path = $overrides[ $relative_path ];
 		}
 
-		// If no mapping found, try to construct the file path directly.
-		if ( empty( $file_path ) ) {
-			$file_path = ANCHOR_DYNAMIC_URL_PATH . 'includes/class-' . str_replace( '/', '-', $class_path ) . '.php';
-		}
+		$file_path = ANCHOR_DYNAMIC_URL_PATH . 'includes/' . $relative_path;
 
-		// Include the file if it exists.
 		if ( file_exists( $file_path ) ) {
 			require_once $file_path;
 		}
