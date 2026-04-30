@@ -13,10 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Check if Elementor is available before proceeding
-// Ensure Elementor has loaded or the Plugin class exists
-if (!did_action('elementor/loaded') && !class_exists('\Elementor\Plugin')) {
-    return; // Exit early if Elementor is not available
+// Guard: this file must only be loaded after Elementor is available.
+if ( ! class_exists( '\Elementor\Plugin' ) ) {
+	return;
 }
 
 /**
