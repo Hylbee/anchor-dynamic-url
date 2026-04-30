@@ -156,7 +156,7 @@ The plugin follows domain-driven design principles:
 
 ## Compatibility
 
-- ✅ **WordPress**: 5.0 - 6.7 (tested)
+- ✅ **WordPress**: 5.0 - 6.9 (tested)
 - ✅ **PHP**: 7.4 - 8.3
 - ✅ **Multisite**: Single-site installations only
 - ✅ **Themes**: Compatible with all themes

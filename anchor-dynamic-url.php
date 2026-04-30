@@ -11,10 +11,8 @@
  * Text Domain: anchor-dynamic-url
  * Domain Path: /languages
  * Requires at least: 5.0
- * Tested up to: 6.7
+ * Tested up to: 6.9
  * Requires PHP: 7.4
- * Update URI: https://github.com/Hylbee/anchor-dynamic-url
- * Network: false
  *
  * @package AnchorDynamicUrl
  */
@@ -76,7 +74,7 @@ add_action(
 );
 
 // Helper function for developers.
-if ( ! function_exists( 'get_menu_item_anchor' ) ) {
+if ( ! function_exists( 'anchor_dynamic_url_get_menu_item_anchor' ) ) {
 	/**
 	 * Get anchor for a specific menu item.
 	 *
@@ -87,7 +85,7 @@ if ( ! function_exists( 'get_menu_item_anchor' ) ) {
 	 * @param int $menu_item_id WordPress menu item ID.
 	 * @return string|null Anchor string or null if not set.
 	 */
-	function get_menu_item_anchor( $menu_item_id ) {
+	function anchor_dynamic_url_get_menu_item_anchor( $menu_item_id ) {
 		$repository = \AnchorDynamicUrl\Plugin\AnchorDynamicUrlManager::get_instance()
 			->get_service()
 			->get_repository();

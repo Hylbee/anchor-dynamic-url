@@ -1,7 +1,7 @@
 === Anchor Dynamic URL ===
-Tags: menu, anchor, url, dynamic, security, elementor
+Tags: menu, anchor, url, dynamic, elementor
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.9
 Stable tag: 1.4.0
 Version: 1.4.0
 Requires PHP: 7.4

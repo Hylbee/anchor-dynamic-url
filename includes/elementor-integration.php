@@ -47,16 +47,16 @@ class AnchorSanitizerForElementor {
  * Function to create our extended URL control class
  * The class will only be created when Elementor is fully loaded
  */
-function create_extended_url_control() {
+function anchor_dynamic_url_create_extended_url_control() {
     // Ensure Elementor's URL control class is available before extending it
     if (!class_exists('\Elementor\Control_URL')) {
         return false; // Return false if base class doesn't exist
     }
-    
+
     /**
      * Extended URL control class that adds anchor options
      */
-    class Extended_URL_Control extends \Elementor\Control_URL {
+    class Anchor_Dynamic_URL_Extended_URL_Control extends \Elementor\Control_URL {
     
         /**
          * Extended default values with our new fields
@@ -135,7 +135,7 @@ function create_extended_url_control() {
     }
 
     // Return the class name for registration
-    return 'Extended_URL_Control';
+    return 'Anchor_Dynamic_URL_Extended_URL_Control';
 }
 
 /**
@@ -146,7 +146,7 @@ function create_extended_url_control() {
  * allowing us to safely replace the default URL control
  */
 add_action( 'elementor/controls/controls_registered', function( $controls_manager ) {
-	$extended_class = create_extended_url_control();
+	$extended_class = anchor_dynamic_url_create_extended_url_control();
 
 	if ( ! $extended_class ) {
 		return;
@@ -279,7 +279,7 @@ add_action( 'elementor/frontend/container/after_render', function( $element ) {
 		);
 	}
 
-	echo $content;
+	echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $content is Elementor's own rendered HTML, already escaped by Elementor.
 } );
 
 /**
