@@ -310,7 +310,7 @@ function menu_anchor_render_content( $content, $widget ) {
 
 			// Match href="" or href="#" — both mean "current page".
 			$content = preg_replace_callback(
-				'/(<a[^>]*\shref=["\'])(#?)(["\'][^>]*>)/i',
+				'/(<a[^>]*href=["\']?)(#?)(["\'][^>]*>)/i',
 				function( $matches ) use ( $new_url ) {
 					if ( '' === $matches[2] || '#' === $matches[2] ) {
 						return $matches[1] . $new_url . $matches[3];
@@ -323,16 +323,15 @@ function menu_anchor_render_content( $content, $widget ) {
 			$base_url = strtok( $original_url, '#' );
 			$new_url  = $base_url . '#' . $anchor_target;
 
-			// Build a pattern that matches both the raw URL and its HTML-encoded form
-			// (e.g. & vs &amp;) so URLs with query strings are handled correctly.
-			$encoded_url    = htmlspecialchars( $original_url, ENT_QUOTES, 'UTF-8' );
-			$url_pattern    = preg_quote( $original_url, '/' );
+			// Match both the raw URL and its HTML-encoded form (& vs &amp;).
+			$encoded_url = htmlspecialchars( $original_url, ENT_QUOTES, 'UTF-8' );
+			$url_pattern = preg_quote( $original_url, '/' );
 			if ( $encoded_url !== $original_url ) {
 				$url_pattern = '(?:' . $url_pattern . '|' . preg_quote( $encoded_url, '/' ) . ')';
 			}
 
 			$content = preg_replace_callback(
-				'/(<a[^>]*\shref=["\'])' . $url_pattern . '(["\'][^>]*>)/i',
+				'/(<a[^>]*href=["\']?)' . $url_pattern . '(["\'][^>]*>)/i',
 				function( $matches ) use ( $new_url ) {
 					return $matches[1] . $new_url . $matches[2];
 				},
