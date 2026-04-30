@@ -156,8 +156,8 @@ register_deactivation_hook( __FILE__, 'anchor_dynamic_url_deactivate' );
  * @since 1.0.0
  */
 function anchor_dynamic_url_deactivate() {
-	// Clear cached update information.
 	delete_transient( 'anchor_dynamic_url_remote_version' );
+	delete_transient( 'anchor_dynamic_url_changelog' );
 }
 
 /**

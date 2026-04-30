@@ -217,17 +217,28 @@ class AnchorDynamicUrlUpdater {
 	}
 
 	/**
-	 * Get remote changelog from GitHub.
+	 * Get remote changelog from GitHub, cached for 12 hours.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string Formatted changelog HTML.
 	 */
 	private function get_remote_changelog() {
+		$transient_key = 'anchor_dynamic_url_changelog';
+		$cached        = get_transient( $transient_key );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
 		$request = wp_remote_get(
 			'https://api.github.com/repos/' . $this->github_repo . '/releases',
 			array(
 				'timeout' => 10,
+				'headers' => array(
+					'Accept'     => 'application/vnd.github+json',
+					'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ),
+				),
 			)
 		);
 
@@ -236,7 +247,7 @@ class AnchorDynamicUrlUpdater {
 			return __( 'Unable to fetch changelog.', 'anchor-dynamic-url' );
 		}
 
-		$body = wp_remote_retrieve_body( $request );
+		$body     = wp_remote_retrieve_body( $request );
 		$releases = json_decode( $body, true );
 
 		if ( ! is_array( $releases ) ) {
@@ -246,11 +257,11 @@ class AnchorDynamicUrlUpdater {
 
 		$changelog = '<div class="menu-anchor-changelog">';
 
-		foreach ( array_slice( $releases, 0, 5 ) as $release ) { // Show last 5 releases.
-			$version = ltrim( $release['tag_name'], 'v' );
-			$date = wp_date( 'F j, Y', strtotime( $release['published_at'] ) );
+		foreach ( array_slice( $releases, 0, 5 ) as $release ) {
+			$version      = ltrim( $release['tag_name'], 'v' );
+			$date         = wp_date( 'F j, Y', strtotime( $release['published_at'] ) );
 			/* translators: Message shown when a release has no notes */
-			$body = $release['body'] ? wp_kses_post( $release['body'] ) : __( 'No release notes available.', 'anchor-dynamic-url' );
+			$release_body = $release['body'] ? wp_kses_post( $release['body'] ) : __( 'No release notes available.', 'anchor-dynamic-url' );
 
 			$changelog .= '<h4>' . sprintf(
 				/* translators: 1: version number, 2: release date */
@@ -258,10 +269,12 @@ class AnchorDynamicUrlUpdater {
 				esc_html( $version ),
 				esc_html( $date )
 			) . '</h4>';
-			$changelog .= '<div>' . wp_kses_post( $body ) . '</div>';
+			$changelog .= '<div>' . wp_kses_post( $release_body ) . '</div>';
 		}
 
 		$changelog .= '</div>';
+
+		set_transient( $transient_key, $changelog, 12 * HOUR_IN_SECONDS );
 
 		return $changelog;
 	}
