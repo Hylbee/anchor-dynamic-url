@@ -143,23 +143,24 @@ function create_extended_url_control() {
  * This hook fires when all Elementor controls have been registered
  * allowing us to safely replace the default URL control
  */
-add_action('elementor/controls/controls_registered', function($controls_manager) {
-    // Create our extended class
-    $extended_class = create_extended_url_control();
-    
-    // Only proceed if our extended class was created successfully
-    if ($extended_class) {
-        // Unregister existing URL control to replace it
-        $controls_manager->unregister_control('url');
-        
-        // Create an instance of our extended control
-        $extended_control = new $extended_class();
-        
-        // Register our extended URL control with the same 'url' identifier
-        // This ensures all existing URL controls use our extended version
-        $controls_manager->register_control('url', $extended_control);
-    }
-});
+add_action( 'elementor/controls/controls_registered', function( $controls_manager ) {
+	$extended_class = create_extended_url_control();
+
+	if ( ! $extended_class ) {
+		return;
+	}
+
+	$extended_control = new $extended_class();
+
+	// unregister()/register() replaced the deprecated unregister_control()/register_control() in Elementor 3.5.
+	if ( method_exists( $controls_manager, 'unregister' ) ) {
+		$controls_manager->unregister( 'url' );
+		$controls_manager->register( $extended_control );
+	} else {
+		$controls_manager->unregister_control( 'url' );
+		$controls_manager->register_control( 'url', $extended_control );
+	}
+} );
 
 /**
  * Ensure the plugin only loads when Elementor is ready
