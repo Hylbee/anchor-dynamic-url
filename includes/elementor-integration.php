@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Guard: this file must only be loaded after Elementor is available.
-if ( ! class_exists( '\Elementor\Plugin' ) ) {
+// Exit early if Elementor is not available.
+if ( ! did_action( 'elementor/loaded' ) && ! class_exists( '\Elementor\Plugin' ) ) {
 	return;
 }
 
@@ -187,15 +187,12 @@ add_action('elementor/init', function() {
                 // Get existing control configuration
                 $existing_control = $element->get_controls($control_id);
                 
-                // If control doesn't already have our options, add them
-                if (isset($existing_control['options']) && !in_array('anchor_target', $existing_control['options'])) {
-                    // Update control options to include our anchor functionality
+                // Add anchor_target option if not already present.
+                // Fall back to an empty array when the control has no 'options' key.
+                $current_options = isset($existing_control['options']) ? $existing_control['options'] : [];
+                if (!in_array('anchor_target', $current_options)) {
                     $element->update_control($control_id, [
-                        'options' => array_merge($existing_control['options'], [
-                            'anchor_target',    // Target element ID
-                            'anchor_behavior',  // Scroll behavior options
-                            'anchor_offset'     // Scroll offset adjustment
-                        ])
+                        'options' => array_merge($current_options, ['anchor_target'])
                     ]);
                 }
             }

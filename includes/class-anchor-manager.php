@@ -134,12 +134,8 @@ class AnchorDynamicUrlManager {
 	 * @since 1.0.0
 	 */
 	private function init_includes() {
-		// Load Elementor integration on the elementor/loaded hook so it fires regardless
-		// of whether Elementor loads before or after this plugin during init.
 		if ( file_exists( ANCHOR_DYNAMIC_URL_PATH . 'includes/elementor-integration.php' ) ) {
-			add_action( 'elementor/loaded', function() {
-				require_once ANCHOR_DYNAMIC_URL_PATH . 'includes/elementor-integration.php';
-			} );
+			require_once ANCHOR_DYNAMIC_URL_PATH . 'includes/elementor-integration.php';
 		}
 	}
 
