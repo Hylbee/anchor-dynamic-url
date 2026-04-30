@@ -95,40 +95,42 @@ function create_extended_url_control() {
          * Renders the HTML template for the control in Elementor's editor
          * This template uses Underscore.js templating syntax
          */
-        public function content_template() {
-            // Get parent template
-            ob_start();
-            parent::content_template();
-            $parent_template = ob_get_clean();
+		public function content_template() {
+			ob_start();
+			parent::content_template();
+			$parent_template = ob_get_clean();
 
-            // Create anchor field template using the same structure as Elementor's URL options
-            ob_start();
-            ?>
-            <# if ( -1 !== data.options.indexOf( 'anchor_target' ) ) { #>
-                <div class="elementor-control-url__custom-attributes" style="margin-top: 10px;">
-                    <label for="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-url__custom-attributes-label"><?php echo esc_html__( 'Target Anchor', 'anchor-dynamic-url' ); ?></label>
-                    <input type="text" id="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-unit-5" placeholder="<?php esc_attr_e( 'section-id', 'anchor-dynamic-url' ); ?>" data-setting="anchor_target">
-                </div>
-                <div class="elementor-control-field-description"><?php echo esc_html__( 'ID of the target element for scrolling (without #). Leave blank to use the normal link.', 'anchor-dynamic-url' ); ?></div>
-            <# } #>
-            <?php
-            $anchor_field = ob_get_clean();
+			ob_start();
+			?>
+			<# if ( -1 !== data.options.indexOf( 'anchor_target' ) ) { #>
+				<div class="elementor-control-url__custom-attributes" style="margin-top: 10px;">
+					<label for="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-url__custom-attributes-label"><?php echo esc_html__( 'Target Anchor', 'anchor-dynamic-url' ); ?></label>
+					<input type="text" id="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-unit-5" placeholder="<?php esc_attr_e( 'section-id', 'anchor-dynamic-url' ); ?>" data-setting="anchor_target">
+				</div>
+				<div class="elementor-control-field-description"><?php echo esc_html__( 'ID of the target element for scrolling (without #). Leave blank to use the normal link.', 'anchor-dynamic-url' ); ?></div>
+			<# } #>
+			<?php
+			$anchor_field = ob_get_clean();
 
-            // Insert our field before the closing div of elementor-control-url-more-options
-            // Look for the pattern that closes the more-options section
-            $search_pattern = '<# if ( ( data.options && -1 !== data.options.indexOf( \'custom_attributes\' ) ) && data.custom_attributes_description ) { #>
+			$search_pattern = '<# if ( ( data.options && -1 !== data.options.indexOf( \'custom_attributes\' ) ) && data.custom_attributes_description ) { #>
                     <div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
                     <# } #>';
 
-            $replacement = '<# if ( ( data.options && -1 !== data.options.indexOf( \'custom_attributes\' ) ) && data.custom_attributes_description ) { #>
-                    <div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
-                    <# } #>
-                    ' . $anchor_field;
+			$replacement = $search_pattern . "\n\t\t\t\t" . $anchor_field;
 
-            $modified_template = str_replace($search_pattern, $replacement, $parent_template);
+			// If the parent template structure has changed (e.g. after an Elementor update),
+			// fall back to appending our field at the end rather than silently dropping it.
+			if ( strpos( $parent_template, $search_pattern ) !== false ) {
+				$modified_template = str_replace( $search_pattern, $replacement, $parent_template );
+			} else {
+				$modified_template = $parent_template . $anchor_field;
+			}
 
-            echo $modified_template;
-        }
+			// content_template() is expected to echo its output (Elementor's contract).
+			// Both $parent_template (from Elementor core) and $anchor_field (our own
+			// escaped PHP output) are trusted — no further escaping is applied here.
+			echo $modified_template; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
 
     }
 
