@@ -79,6 +79,17 @@ class AnchorDynamicUrlManager {
 	}
 
 	/**
+	 * Get the service instance for external use.
+	 *
+	 * @since 1.4.1
+	 *
+	 * @return AnchorService
+	 */
+	public function get_service() {
+		return $this->service;
+	}
+
+	/**
 	 * Initialize WordPress hooks.
 	 *
 	 * Connects all plugin functionality to WordPress action and filter hooks.

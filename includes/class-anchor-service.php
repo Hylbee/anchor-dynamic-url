@@ -46,6 +46,17 @@ class AnchorService {
 	}
 
 	/**
+	 * Get the repository instance.
+	 *
+	 * @since 1.4.1
+	 *
+	 * @return AnchorRepository
+	 */
+	public function get_repository() {
+		return $this->repository;
+	}
+
+	/**
 	 * Add anchor field to menu item edit form.
 	 *
 	 * This method is called by WordPress when rendering menu item edit forms.

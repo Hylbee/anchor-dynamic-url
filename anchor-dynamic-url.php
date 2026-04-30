@@ -88,7 +88,9 @@ if ( ! function_exists( 'get_menu_item_anchor' ) ) {
 	 * @return string|null Anchor string or null if not set.
 	 */
 	function get_menu_item_anchor( $menu_item_id ) {
-		$repository = new \AnchorDynamicUrl\Repository\AnchorRepository();
+		$repository = \AnchorDynamicUrl\Plugin\AnchorDynamicUrlManager::get_instance()
+			->get_service()
+			->get_repository();
 		return $repository->get_anchor( $menu_item_id );
 	}
 }
