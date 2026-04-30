@@ -288,68 +288,59 @@ add_action( 'elementor/frontend/container/after_render', function( $element ) {
  */
 add_filter('elementor/widget/render_content', 'menu_anchor_render_content', 10, 2);
 
-function menu_anchor_render_content($content, $widget) {
-    // Get widget settings as they appear on the frontend
-    $settings = $widget->get_settings_for_display();
+function menu_anchor_render_content( $content, $widget ) {
+	$settings = $widget->get_settings_for_display();
 
-    // Search for URL controls with anchor_target specified
-    foreach ($settings as $setting_key => $setting_value) {
-        // Check if this setting is a URL control with anchor target
-        if (is_array($setting_value)
-            && isset($setting_value['url'])           // Has URL field
-            && isset($setting_value['anchor_target']) // Has our anchor target field
-            && !empty($setting_value['anchor_target'])) { // Anchor target is not empty
-            // Sanitize the anchor target to ensure it's valid
-            $anchor_target = AnchorSanitizerForElementor::sanitize($setting_value['anchor_target']);
+	foreach ( $settings as $setting_value ) {
+		if ( ! is_array( $setting_value )
+			|| empty( $setting_value['url'] )
+			|| empty( $setting_value['anchor_target'] ) ) {
+			continue;
+		}
 
-            if ($anchor_target) {
+		$anchor_target = AnchorSanitizerForElementor::sanitize( $setting_value['anchor_target'] );
 
-                // Build new URL with anchor fragment
-                $original_url = $setting_value['url'];
+		if ( ! $anchor_target ) {
+			continue;
+		}
 
-                // Handle different URL scenarios
-                if (empty($original_url) || $original_url === '#') {
-                    // If no URL specified, create anchor link to current page
-                    $new_url = '#' . $anchor_target;
-                } else {
-                    // If URL specified, remove existing fragment and add our anchor
-                    $base_url = strtok($original_url, '#'); // Remove existing fragment
-                    $new_url = $base_url . '#' . $anchor_target;
-                }
+		$original_url = $setting_value['url'];
 
-                // Use regex to find and modify links in the widget's HTML content
-                $content = preg_replace_callback(
-                    '/(<a[^>]*href=["\']?)' . preg_quote($original_url, '/') . '(["\'][^>]*>)/i',
-                    function($matches) use ($new_url) {
-                        $link_start = $matches[1]; // Opening <a href="
-                        $link_end = $matches[2];   // Closing " and attributes>
+		if ( empty( $original_url ) || '#' === $original_url ) {
+			$new_url = '#' . $anchor_target;
 
-                        // Replace with new URL containing anchor
-                        return $link_start . $new_url . $link_end;
-                    },
-                    $content
-                );
+			// Match href="" or href="#" — both mean "current page".
+			$content = preg_replace_callback(
+				'/(<a[^>]*\shref=["\'])(#?)(["\'][^>]*>)/i',
+				function( $matches ) use ( $new_url ) {
+					if ( '' === $matches[2] || '#' === $matches[2] ) {
+						return $matches[1] . $new_url . $matches[3];
+					}
+					return $matches[0];
+				},
+				$content
+			);
+		} else {
+			$base_url = strtok( $original_url, '#' );
+			$new_url  = $base_url . '#' . $anchor_target;
 
-                // Special handling for empty or # URLs
-                if (empty($original_url) || $original_url === '#') {
-                    $content = preg_replace_callback(
-                        '/(<a[^>]*href=["\']?)(#?)(["\'][^>]*>)/i',
-                        function($matches) use ($new_url) {
-                            // Only replace if href is empty or just #
-                            if ($matches[2] === '#' || empty($matches[2])) {
-                                $link_start = $matches[1];
-                                $link_end = $matches[3];
+			// Build a pattern that matches both the raw URL and its HTML-encoded form
+			// (e.g. & vs &amp;) so URLs with query strings are handled correctly.
+			$encoded_url    = htmlspecialchars( $original_url, ENT_QUOTES, 'UTF-8' );
+			$url_pattern    = preg_quote( $original_url, '/' );
+			if ( $encoded_url !== $original_url ) {
+				$url_pattern = '(?:' . $url_pattern . '|' . preg_quote( $encoded_url, '/' ) . ')';
+			}
 
-                                return $link_start . $new_url . $link_end;
-                            }
-                            return $matches[0]; // Return unchanged if not matching
-                        },
-                        $content
-                    );
-                }
-            }
-        }
-    }
+			$content = preg_replace_callback(
+				'/(<a[^>]*\shref=["\'])' . $url_pattern . '(["\'][^>]*>)/i',
+				function( $matches ) use ( $new_url ) {
+					return $matches[1] . $new_url . $matches[2];
+				},
+				$content
+			);
+		}
+	}
 
-    return $content; // Return the modified content
-}; // Priority 10, accept 2 parameters (content, widget)
+	return $content;
+}
