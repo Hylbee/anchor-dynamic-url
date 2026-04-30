@@ -93,10 +93,8 @@ class AnchorDynamicUrlManager {
 		// Save anchor field data when menu is updated.
 		add_action( 'wp_update_nav_menu_item', array( $this->service, 'save_anchor' ), 10, 2 );
 
-		// Modify individual menu item URLs before display (single item processing).
-		add_filter( 'wp_setup_nav_menu_item', array( $this->service, 'update_menu_item_url' ), 10, 1 );
-
-		// Handle complete menu output (bulk processing for efficiency).
+		// Handle complete menu output (bulk processing). wp_setup_nav_menu_item is intentionally
+		// omitted to avoid processing each item twice (once per item + once in bulk).
 		add_filter( 'wp_nav_menu_objects', array( $this->service, 'handle_bulk_update' ), 10, 1 );
 
 		// Admin interface hooks.
