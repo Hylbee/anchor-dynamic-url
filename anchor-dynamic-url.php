@@ -178,8 +178,9 @@ register_uninstall_hook( __FILE__, 'anchor_dynamic_url_uninstall' );
  * @since 1.0.0
  */
 function anchor_dynamic_url_uninstall() {
-	// Clear any remaining transient data.
+	// Clear all plugin transients.
 	delete_transient( 'anchor_dynamic_url_remote_version' );
+	delete_transient( 'anchor_dynamic_url_changelog' );
 
 	// Remove all menu anchor meta data using WordPress functions.
 	$menu_items = get_posts(
@@ -190,7 +191,6 @@ function anchor_dynamic_url_uninstall() {
 		)
 	);
 
-	// Delete anchor meta for each menu item.
 	foreach ( $menu_items as $menu_item_id ) {
 		delete_post_meta( $menu_item_id, '_menu_item_anchor' );
 	}
