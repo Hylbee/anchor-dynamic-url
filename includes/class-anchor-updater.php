@@ -292,18 +292,5 @@ class AnchorDynamicUrlUpdater {
 		if ( wp_doing_ajax() || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
 			return;
 		}
-
-		$remote_version = $this->get_remote_version();
-
-		if ( version_compare( $this->version, $remote_version, '<' ) ) {
-			$message = sprintf(
-				/* translators: 1: version number, 2: update URL */
-				__( 'Anchor Dynamic URL version %1$s is available. <a href="%2$s">Update now</a>.', 'anchor-dynamic-url' ),
-				$remote_version,
-				wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . $this->plugin_file ), 'upgrade-plugin_' . $this->plugin_file )
-			);
-
-			echo '<div class="notice notice-warning is-dismissible"><p>' . wp_kses_post( $message ) . '</p></div>';
-		}
 	}
 }
