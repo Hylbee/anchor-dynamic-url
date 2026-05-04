@@ -134,8 +134,8 @@ class AnchorDynamicUrlManager {
 	 * @since 1.0.0
 	 */
 	private function init_includes() {
-		if ( file_exists( ANCHOR_DYNAMIC_URL_PATH . 'includes/elementor-integration.php' ) ) {
-			require_once ANCHOR_DYNAMIC_URL_PATH . 'includes/elementor-integration.php';
+		if ( file_exists( ANCHOR_DYNAMIC_URL_PATH . 'includes/class-elementor-integration.php' ) ) {
+			require_once ANCHOR_DYNAMIC_URL_PATH . 'includes/class-elementor-integration.php';
 		}
 	}
 
