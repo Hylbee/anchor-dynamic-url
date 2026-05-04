@@ -289,6 +289,10 @@ class AnchorDynamicUrlUpdater {
 			return;
 		}
 
+		if ( wp_doing_ajax() || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
+			return;
+		}
+
 		$remote_version = $this->get_remote_version();
 
 		if ( version_compare( $this->version, $remote_version, '<' ) ) {
