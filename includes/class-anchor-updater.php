@@ -120,7 +120,7 @@ class AnchorDynamicUrlUpdater {
 				'banners_rtl'    => array(),
 				'tested'         => isset( $this->plugin_data['RequiresWP'] ) ? $this->plugin_data['RequiresWP'] : '6.4',
 				'requires_php'   => isset( $this->plugin_data['RequiresPHP'] ) ? $this->plugin_data['RequiresPHP'] : '7.4',
-				'compatibility'  => new stdClass(),
+				'compatibility'  => new \stdClass(),
 			);
 		}
 
