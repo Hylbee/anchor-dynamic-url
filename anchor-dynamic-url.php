@@ -3,7 +3,7 @@
  * Plugin Name: Anchor Dynamic URL
  * Plugin URI: https://www.hylbee.fr/
  * Description: This plugin allows you to add a anchor to menu element with a dynamic URL for WordPress menu items and for Elementor element.
- * Version: 1.4.0
+ * Version: 1.5.0
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
@@ -11,7 +11,7 @@
  * Text Domain: anchor-dynamic-url
  * Domain Path: /languages
  * Requires at least: 5.0
- * Tested up to: 6.9
+ * Tested up to: 7.0
  * Requires PHP: 7.4
  *
  * @package AnchorDynamicUrl
@@ -56,7 +56,7 @@ if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
 }
 
 // Define plugin constants for use throughout the plugin.
-define( 'ANCHOR_DYNAMIC_URL_VERSION', '1.4.0' );
+define( 'ANCHOR_DYNAMIC_URL_VERSION', '1.5.0' );
 define( 'ANCHOR_DYNAMIC_URL_FILE', __FILE__ );
 define( 'ANCHOR_DYNAMIC_URL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ANCHOR_DYNAMIC_URL_URL', plugin_dir_url( __FILE__ ) );

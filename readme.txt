@@ -1,9 +1,9 @@
 === Anchor Dynamic URL ===
 Tags: menu, anchor, url, dynamic, elementor
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 1.4.0
-Version: 1.4.0
+Tested up to: 7.0
+Stable tag: 1.5.0
+Version: 1.5.0
 Requires PHP: 7.4
 Author: Hylbee
 License: GPLv2 or later
@@ -58,6 +58,13 @@ Yes, all anchor inputs are sanitized and validated to prevent XSS attacks and en
 3. Frontend anchor links in action
 
 == Changelog ==
+
+= 1.5.0 - 2026-05-19 =
+* Added: Extended Elementor URL control — new AnchorUrlControl class embeds the anchor_target field natively inside the URL control
+* Refactored: Elementor integration rewritten with cleaner architecture using the extended URL control approach
+* Fixed: Update notifications no longer fire during AJAX requests or WP-Cron jobs
+* Fixed: Elementor integration file renamed to class-elementor-integration.php; loader reference updated
+* Compatibility: Tested on WordPress 7.0 prerelease
 
 = 1.4.0 - 2025-09-16 =
 * Added: Elementor container link rewriting via output buffering (supports HTML tag = 'a' containers)

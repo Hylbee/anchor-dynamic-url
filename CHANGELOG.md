@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.5.0] - 2026-05-19
+
+### Added
+- **Extended Elementor URL control**: New `AnchorUrlControl` class extends Elementor's native URL control to embed an `anchor_target` field directly inside the control, replacing the previous separate field injection approach
+- **Elementor integration refactor**: Rewrote `class-elementor-integration.php` — cleaner architecture with the anchor field natively part of the URL control widget
+
+### Fixed
+- **Update notifications suppressed during AJAX/cron**: Update check no longer runs during AJAX requests or WP-Cron jobs, preventing unnecessary background load and noise in admin notifications
+- **Elementor integration file renamed**: Renamed `elementor-integration.php` → `class-elementor-integration.php` for consistency with WordPress class file naming conventions; loader reference updated in `class-anchor-manager.php`
+
+### Compatibility
+- Tested on WordPress 7.0 prerelease
+
 ## [1.4.0] - 2025-09-16
 
 ### Added

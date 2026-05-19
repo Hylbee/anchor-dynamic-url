@@ -5,7 +5,7 @@ A WordPress plugin that adds dynamic anchor management to menu items with automa
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.4.0-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
+[![Version](https://img.shields.io/badge/Version-1.5.0-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
 
 ## Description
 
@@ -156,7 +156,7 @@ The plugin follows domain-driven design principles:
 
 ## Compatibility
 
-- ✅ **WordPress**: 5.0 - 6.9 (tested)
+- ✅ **WordPress**: 5.0 - 7.0 (tested, including 7.0 prerelease)
 - ✅ **PHP**: 7.4 - 8.3
 - ✅ **Multisite**: Single-site installations only
 - ✅ **Themes**: Compatible with all themes
