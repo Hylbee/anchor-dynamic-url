@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.5.1] - 2026-05-19
+
+### Fixed
+- **Fully qualified `stdClass`**: Used `\stdClass` instead of `stdClass` in the compatibility array inside `AnchorDynamicUrlUpdater` — prevents potential class resolution issues in namespaced contexts
+
 ## [1.5.0] - 2026-05-19
 
 ### Added

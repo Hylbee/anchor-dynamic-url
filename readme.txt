@@ -2,8 +2,8 @@
 Tags: menu, anchor, url, dynamic, elementor
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.5.0
-Version: 1.5.0
+Stable tag: 1.5.1
+Version: 1.5.1
 Requires PHP: 7.4
 Author: Hylbee
 License: GPLv2 or later
@@ -58,6 +58,9 @@ Yes, all anchor inputs are sanitized and validated to prevent XSS attacks and en
 3. Frontend anchor links in action
 
 == Changelog ==
+
+= 1.5.1 - 2026-05-19 =
+* Fixed: Use fully qualified \stdClass in AnchorDynamicUrlUpdater compatibility array to prevent class resolution issues in namespaced contexts
 
 = 1.5.0 - 2026-05-19 =
 * Added: Extended Elementor URL control — new AnchorUrlControl class embeds the anchor_target field natively inside the URL control
