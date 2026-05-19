@@ -2,345 +2,240 @@
 /**
  * Elementor Integration - Add dynamic anchor system to Elementor URL controls.
  *
- * URL control extension to include anchor fields.
- *
- * @package AnchorDynamicUrl
+ * @package AnchorDynamicUrl\Elementor
  * @since 1.0.0
  */
 
-// Prevent direct access to this file for security.
+namespace AnchorDynamicUrl\Elementor;
+
+use AnchorDynamicUrl\Entity\AnchorItem;
+use AnchorDynamicUrl\Utils\AnchorSanitizer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Exit early if Elementor is not available.
-if ( ! did_action( 'elementor/loaded' ) && ! class_exists( '\Elementor\Plugin' ) ) {
-	return;
-}
-
 /**
- * Class to handle anchor ID sanitization
+ * Bridges the plugin's anchor system with Elementor's URL control.
+ *
+ * Responsibilities:
+ * - Replaces Elementor's built-in URL control with an extended version that
+ *   exposes an "anchor_target" field in the editor.
+ * - Adds an `id` attribute to rendered elements so they can be targeted.
+ * - Rewrites link `href` values (containers and widgets) to include the
+ *   correct fragment before the page is sent to the browser.
+ *
+ * @since 1.0.0
  */
-class AnchorSanitizerForElementor {
-    /**
-     * Sanitize anchor ID to ensure it's valid for HTML and CSS
-     * 
-     * @param string $anchor_id The raw anchor ID input
-     * @return string Sanitized anchor ID safe for use in HTML/CSS
-     */
-    public static function sanitize($anchor_id) {
-        // Remove spaces, special characters, and ensure valid CSS ID format
-        // Only allow alphanumeric characters, underscores, and hyphens
-        $sanitized = preg_replace('/[^a-zA-Z0-9_-]/', '', trim($anchor_id));
-        
-        // Ensure it doesn't start with a number (invalid CSS selector)
-        // Prepend 'anchor-' prefix if it starts with a digit
-        if (preg_match('/^[0-9]/', $sanitized)) {
-            $sanitized = 'anchor-' . $sanitized;
-        }
-        
-        return $sanitized;
-    }
-}
+class ElementorIntegration {
 
-/**
- * Function to create our extended URL control class
- * The class will only be created when Elementor is fully loaded
- */
-function anchor_dynamic_url_create_extended_url_control() {
-    // Ensure Elementor's URL control class is available before extending it
-    if (!class_exists('\Elementor\Control_URL')) {
-        return false; // Return false if base class doesn't exist
-    }
+	/**
+	 * Register WordPress/Elementor hooks.
+	 *
+	 * @since 1.0.0
+	 */
+	public function init() {
+		add_action( 'elementor/controls/controls_registered', array( $this, 'register_extended_url_control' ) );
+		add_action( 'elementor/init', array( $this, 'on_elementor_init' ) );
+		add_action( 'elementor/frontend/before_render', array( $this, 'add_anchor_id_to_element' ) );
+		add_action( 'elementor/frontend/container/before_render', array( $this, 'rewrite_container_link' ), 9 );
+		add_filter( 'elementor/widget/render_content', array( $this, 'rewrite_widget_links' ), 10, 2 );
+	}
 
-    /**
-     * Extended URL control class that adds anchor options
-     */
-    class Anchor_Dynamic_URL_Extended_URL_Control extends \Elementor\Control_URL {
-    
-        /**
-         * Extended default values with our new fields
-         * Extends parent default values to include anchor targeting
-         * 
-         * @return array Default values for the URL control
-         */
-        public function get_default_value() {
-            $parent_defaults = parent::get_default_value();
-            return array_merge($parent_defaults, [
-                'anchor_target' => '',
-            ]);
-        }
+	/**
+	 * Replace Elementor's URL control with our extended version.
+	 *
+	 * Fires on `elementor/controls/controls_registered`.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Elementor\Controls_Manager $controls_manager Elementor's controls registry.
+	 */
+	public function register_extended_url_control( $controls_manager ) {
+		if ( ! class_exists( '\Elementor\Control_URL' ) ) {
+			return;
+		}
 
-        /**
-         * Extended default settings with our new options
-         * Merges parent settings with our anchor options
-         * 
-         * @return array Extended settings including anchor options
-         */
-        protected function get_default_settings() {
-            // Get the parent class default settings first
-            $settings = parent::get_default_settings();
-            
-            // Add our new option to the available options array
-            // This makes the anchor_target field available in the control
-            $settings['options'] = array_merge($settings['options'], [
-                'anchor_target',
-            ]);
-            
-            return $settings;
-        }
+		// Load the global-namespace class here: this hook fires after Elementor
+		// has registered all its own controls, so Control_URL is guaranteed to exist.
+		require_once __DIR__ . '/class-elementor-url-control.php';
 
-        /**
-         * Custom template that adds our fields after custom_attributes
-         * Renders the HTML template for the control in Elementor's editor
-         * This template uses Underscore.js templating syntax
-         */
-		public function content_template() {
-			ob_start();
-			parent::content_template();
-			$parent_template = ob_get_clean();
+		$extended_control = new \Anchor_Dynamic_URL_Extended_URL_Control();
 
-			ob_start();
-			?>
-			<# if ( -1 !== data.options.indexOf( 'anchor_target' ) ) { #>
-				<div class="elementor-control-url__custom-attributes" style="margin-top: 10px;">
-					<label for="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-url__custom-attributes-label"><?php echo esc_html__( 'Target Anchor', 'anchor-dynamic-url' ); ?></label>
-					<input type="text" id="<?php $this->print_control_uid( 'anchor_target' ); ?>" class="elementor-control-unit-5" placeholder="<?php esc_attr_e( 'section-id', 'anchor-dynamic-url' ); ?>" data-setting="anchor_target">
-				</div>
-				<div class="elementor-control-field-description"><?php echo esc_html__( 'ID of the target element for scrolling (without #). Leave blank to use the normal link.', 'anchor-dynamic-url' ); ?></div>
-			<# } #>
-			<?php
-			$anchor_field = ob_get_clean();
+		// unregister()/register() replaced the deprecated pair in Elementor 3.5.
+		if ( method_exists( $controls_manager, 'unregister' ) ) {
+			$controls_manager->unregister( 'url' );
+			$controls_manager->register( $extended_control );
+		} else {
+			$controls_manager->unregister_control( 'url' );
+			$controls_manager->register_control( 'url', $extended_control );
+		}
+	}
 
-			$search_pattern = '<# if ( ( data.options && -1 !== data.options.indexOf( \'custom_attributes\' ) ) && data.custom_attributes_description ) { #>
-                    <div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
-                    <# } #>';
+	/**
+	 * Hook into Elementor after it has fully initialised.
+	 *
+	 * @since 1.0.0
+	 */
+	public function on_elementor_init() {
+		add_action( 'elementor/element/before_section_end', array( $this, 'inject_anchor_option_into_url_controls' ), 10, 2 );
+	}
 
-			$replacement = $search_pattern . "\n\t\t\t\t" . $anchor_field;
+	/**
+	 * Ensure anchor_target is listed in the options of every URL control.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Elementor\Element_Base $element    The element whose section is ending.
+	 * @param string                  $section_id The section ID.
+	 */
+	public function inject_anchor_option_into_url_controls( $element, $section_id ) {
+		foreach ( $element->get_controls() as $control_id => $control_data ) {
+			if ( ! isset( $control_data['type'] ) || \Elementor\Controls_Manager::URL !== $control_data['type'] ) {
+				continue;
+			}
 
-			// If the parent template structure has changed (e.g. after an Elementor update),
-			// fall back to appending our field at the end rather than silently dropping it.
-			if ( strpos( $parent_template, $search_pattern ) !== false ) {
-				$modified_template = str_replace( $search_pattern, $replacement, $parent_template );
+			$existing = $element->get_controls( $control_id );
+			$options  = $this->normalize_options( $existing['options'] ?? false );
+
+			if ( ! in_array( 'anchor_target', $options, true ) ) {
+				$element->update_control( $control_id, array(
+					'options' => array_merge( $options, array( 'anchor_target' ) ),
+				) );
+			}
+		}
+	}
+
+	/**
+	 * Add an HTML `id` attribute to any element that carries an anchor_target setting.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Elementor\Element_Base $element The element about to be rendered.
+	 */
+	public function add_anchor_id_to_element( $element ) {
+		$settings  = $element->get_settings_for_display();
+		$anchor_id = AnchorSanitizer::sanitize( $settings['anchor_target'] ?? '' );
+
+		if ( $anchor_id ) {
+			$element->add_render_attribute( '_wrapper', 'id', $anchor_id );
+		}
+	}
+
+	/**
+	 * Rewrite the link href of a container element before it is rendered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Elementor\Element_Base $element The container element.
+	 */
+	public function rewrite_container_link( $element ) {
+		$settings = $element->get_settings_for_display();
+
+		if ( empty( $settings['link']['anchor_target'] ) ) {
+			return;
+		}
+
+		$new_url = $this->build_url( $settings['link']['url'] ?? '', $settings['link']['anchor_target'] );
+
+		if ( ! $new_url ) {
+			return;
+		}
+
+		$link        = $settings['link'];
+		$link['url'] = $new_url;
+		$element->add_link_attributes( '_wrapper', $link );
+	}
+
+	/**
+	 * Rewrite all anchor-target URLs inside rendered widget HTML.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string                 $content The rendered widget HTML.
+	 * @param \Elementor\Widget_Base $widget  The widget instance.
+	 * @return string Modified HTML.
+	 */
+	public function rewrite_widget_links( $content, $widget ) {
+		foreach ( $widget->get_settings_for_display() as $setting_value ) {
+			if ( ! is_array( $setting_value )
+				|| ! isset( $setting_value['url'] )
+				|| empty( $setting_value['anchor_target'] ) ) {
+				continue;
+			}
+
+			$original_url = $setting_value['url'];
+			$new_url      = $this->build_url( $original_url, $setting_value['anchor_target'] );
+
+			if ( ! $new_url ) {
+				continue;
+			}
+
+			if ( empty( $original_url ) || '#' === $original_url ) {
+				$content = preg_replace_callback(
+					'/(<a[^>]*href=["\']?)(#?)(["\'][^>]*>)/i',
+					static function ( $matches ) use ( $new_url ) {
+						if ( '' === $matches[2] || '#' === $matches[2] ) {
+							return $matches[1] . $new_url . $matches[3];
+						}
+						return $matches[0];
+					},
+					$content
+				);
 			} else {
-				$modified_template = $parent_template . $anchor_field;
+				$encoded_url = htmlspecialchars( $original_url, ENT_QUOTES, 'UTF-8' );
+				$url_pattern = preg_quote( $original_url, '/' );
+				if ( $encoded_url !== $original_url ) {
+					$url_pattern = '(?:' . $url_pattern . '|' . preg_quote( $encoded_url, '/' ) . ')';
+				}
+
+				$content = preg_replace_callback(
+					'/(<a[^>]*href=["\']?)' . $url_pattern . '(["\'][^>]*>)/i',
+					static function ( $matches ) use ( $new_url ) {
+						return $matches[1] . $new_url . $matches[2];
+					},
+					$content
+				);
 			}
-
-			// content_template() is expected to echo its output (Elementor's contract).
-			// Both $parent_template (from Elementor core) and $anchor_field (our own
-			// escaped PHP output) are trusted — no further escaping is applied here.
-			echo $modified_template; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-    }
+		return $content;
+	}
 
-    // Return the class name for registration
-    return 'Anchor_Dynamic_URL_Extended_URL_Control';
+	// -------------------------------------------------------------------------
+	// Private helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Build the final URL by appending the anchor fragment.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $original_url The base URL (may be empty).
+	 * @param string $raw_anchor   Raw anchor_target value from the control.
+	 * @return string URL with fragment, or empty string on failure.
+	 */
+	private function build_url( $original_url, $raw_anchor ) {
+		if ( ! AnchorSanitizer::sanitize( $raw_anchor ) ) {
+			return '';
+		}
+
+		$item = new AnchorItem( 0, $raw_anchor, null, $original_url );
+		return $item->generate_url();
+	}
+
+	/**
+	 * Normalise an `options` value that Elementor may return as false.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array|false $options Value from control settings.
+	 * @return array
+	 */
+	private function normalize_options( $options ) {
+		return is_array( $options ) ? $options : array( 'url', 'is_external', 'nofollow', 'custom_attributes' );
+	}
 }
 
-/**
- * Replace URL control with our extended version
- * Wait for Elementor controls to be available
- * 
- * This hook fires when all Elementor controls have been registered
- * allowing us to safely replace the default URL control
- */
-add_action( 'elementor/controls/controls_registered', function( $controls_manager ) {
-	$extended_class = anchor_dynamic_url_create_extended_url_control();
-
-	if ( ! $extended_class ) {
-		return;
-	}
-
-	$extended_control = new $extended_class();
-
-	// unregister()/register() replaced the deprecated unregister_control()/register_control() in Elementor 3.5.
-	if ( method_exists( $controls_manager, 'unregister' ) ) {
-		$controls_manager->unregister( 'url' );
-		$controls_manager->register( $extended_control );
-	} else {
-		$controls_manager->unregister_control( 'url' );
-		$controls_manager->register_control( 'url', $extended_control );
-	}
-} );
-
-/**
- * Ensure the plugin only loads when Elementor is ready
- * This hook fires when Elementor has finished initializing
- */
-add_action('elementor/init', function() {
-    
-    // Now we can safely load our hooks that depend on Elementor being fully loaded
-    
-    /**
-     * Modify all existing widgets to include our new default options
-     * This ensures that all URL controls in existing widgets get our anchor options
-     */
-    add_action('elementor/element/before_section_end', function($element, $section_id) {
-        // Get all controls from current section
-        $controls = $element->get_controls();
-        
-        // Loop through controls to find URL type ones
-        foreach ($controls as $control_id => $control_data) {
-            // Check if this is a URL control type
-            if (isset($control_data['type']) && $control_data['type'] === \Elementor\Controls_Manager::URL) {
-                // Get existing control configuration
-                $existing_control = $element->get_controls($control_id);
-                
-                // Add anchor_target option if not already present.
-                // Fall back to an empty array when the control has no 'options' key.
-                $current_options = isset($existing_control['options']) ? $existing_control['options'] : [];
-                if (!in_array('anchor_target', $current_options)) {
-                    $element->update_control($control_id, [
-                        'options' => array_merge($current_options, ['anchor_target'])
-                    ]);
-                }
-            }
-        }
-    }, 10, 2); // Priority 10, accept 2 parameters
-    
-});
-
-/**
- * Add ID attribute to elements for anchor targeting
- * This allows any element to be targeted by anchor links
- */
-add_action('elementor/frontend/before_render', 'menu_anchor_before_render', 10, 1);
-
-/**
- * @param object $element The Elementor element instance being rendered
- */
-function menu_anchor_before_render($element) {
-    // Get element settings configured in the editor
-    $settings = $element->get_settings_for_display();
-
-    // Handle anchor ID (element can be targeted by anchor links)
-    // This works for widgets, sections, columns, but NOT for container links
-    if (!empty($settings['anchor_target'])) {
-        // Sanitize the anchor ID to ensure it's valid for HTML/CSS
-        $anchor_target = AnchorSanitizerForElementor::sanitize($settings['anchor_target']);
-
-        // Only add the ID if sanitization was successful
-        if ($anchor_target) {
-            // Add the ID attribute to the element's wrapper div
-            // This makes the element targetable by anchor links (#anchor_target)
-            $element->add_render_attribute('_wrapper', 'id', $anchor_target);
-        }
-    }
-}
-
-/**
- * Handle containers with link wrapping (HTML tag = 'a')
- * Capture container output and modify link href after rendering
- * This uses output buffering to modify the HTML after it's generated
- */
-add_action( 'elementor/frontend/container/before_render', function( $element ) {
-	$settings = $element->get_settings_for_display();
-
-	if ( ! empty( $settings['link']['anchor_target'] ) && ! empty( $settings['link']['url'] ) ) {
-		// Store the current ob level on the element so after_render can verify it.
-		$element->anchor_ob_level = ob_get_level();
-		ob_start();
-	}
-} );
-
-add_action( 'elementor/frontend/container/after_render', function( $element ) {
-	$settings = $element->get_settings_for_display();
-
-	if ( empty( $settings['link']['anchor_target'] ) || empty( $settings['link']['url'] ) ) {
-		return;
-	}
-
-	// Only call ob_get_clean() if the buffer we opened is still on the stack.
-	if ( ! isset( $element->anchor_ob_level ) || ob_get_level() <= $element->anchor_ob_level ) {
-		return;
-	}
-
-	$content = ob_get_clean();
-
-	$anchor_target = AnchorSanitizerForElementor::sanitize( $settings['link']['anchor_target'] );
-
-	if ( $anchor_target ) {
-		$original_url = $settings['link']['url'];
-
-		if ( empty( $original_url ) || '#' === $original_url ) {
-			$new_url = '#' . $anchor_target;
-		} else {
-			$base_url = strtok( $original_url, '#' );
-			$new_url  = $base_url . '#' . $anchor_target;
-		}
-
-		$content = preg_replace_callback(
-			'/(<a[^>]*href=["\'])' . preg_quote( $original_url, '/' ) . '(["\'])/i',
-			function( $matches ) use ( $new_url ) {
-				return $matches[1] . $new_url . $matches[2];
-			},
-			$content
-		);
-	}
-
-	echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $content is Elementor's own rendered HTML, already escaped by Elementor.
-} );
-
-/**
- * Hook to modify HTML content generated by widgets
- * This filter processes widget content to replace URLs with anchor targets
- * when the anchor_target field is specified in URL controls
- */
-add_filter('elementor/widget/render_content', 'menu_anchor_render_content', 10, 2);
-
-function menu_anchor_render_content( $content, $widget ) {
-	$settings = $widget->get_settings_for_display();
-
-	foreach ( $settings as $setting_value ) {
-		if ( ! is_array( $setting_value )
-			|| ! isset( $setting_value['url'] )
-			|| empty( $setting_value['anchor_target'] ) ) {
-			continue;
-		}
-
-		$anchor_target = AnchorSanitizerForElementor::sanitize( $setting_value['anchor_target'] );
-
-		if ( ! $anchor_target ) {
-			continue;
-		}
-
-		$original_url = $setting_value['url'];
-
-		if ( empty( $original_url ) || '#' === $original_url ) {
-			$new_url = '#' . $anchor_target;
-
-			// Match href="" or href="#" — both mean "current page".
-			$content = preg_replace_callback(
-				'/(<a[^>]*href=["\']?)(#?)(["\'][^>]*>)/i',
-				function( $matches ) use ( $new_url ) {
-					if ( '' === $matches[2] || '#' === $matches[2] ) {
-						return $matches[1] . $new_url . $matches[3];
-					}
-					return $matches[0];
-				},
-				$content
-			);
-		} else {
-			$base_url = strtok( $original_url, '#' );
-			$new_url  = $base_url . '#' . $anchor_target;
-
-			// Match both the raw URL and its HTML-encoded form (& vs &amp;).
-			$encoded_url = htmlspecialchars( $original_url, ENT_QUOTES, 'UTF-8' );
-			$url_pattern = preg_quote( $original_url, '/' );
-			if ( $encoded_url !== $original_url ) {
-				$url_pattern = '(?:' . $url_pattern . '|' . preg_quote( $encoded_url, '/' ) . ')';
-			}
-
-			$content = preg_replace_callback(
-				'/(<a[^>]*href=["\']?)' . $url_pattern . '(["\'][^>]*>)/i',
-				function( $matches ) use ( $new_url ) {
-					return $matches[1] . $new_url . $matches[2];
-				},
-				$content
-			);
-		}
-	}
-
-	return $content;
-}
+// Bootstrap: register hooks so Elementor's own action hooks do the real work.
+( new ElementorIntegration() )->init();
