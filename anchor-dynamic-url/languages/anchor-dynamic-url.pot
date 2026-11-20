@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Anchor Dynamic URL 1.5.2\n"
 "Report-Msgid-Bugs-To: https://github.com/Hylbee/anchor-dynamic-url/issues\n"
-"POT-Creation-Date: 2026-11-20 10:45+0000\n"
+"POT-Creation-Date: 2026-11-20 10:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,37 +73,37 @@ msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
 msgstr ""
 
 #. translators: Error shown when the downloaded update ZIP is not this plugin
-#: includes/class-anchor-updater.php:255
+#: includes/class-anchor-updater.php:272
 msgid "The update package does not contain the Anchor Dynamic URL plugin."
 msgstr ""
 
 #. translators: Error shown when the unpacked update cannot be moved to the plugin folder name
-#: includes/class-anchor-updater.php:282
+#: includes/class-anchor-updater.php:299
 msgid "Unable to prepare the update package folder."
 msgstr ""
 
 #. translators: Error message when changelog cannot be fetched from GitHub
-#: includes/class-anchor-updater.php:496
+#: includes/class-anchor-updater.php:522
 msgid "Unable to fetch changelog."
 msgstr ""
 
 #. translators: Message shown when no changelog data is available
-#: includes/class-anchor-updater.php:504
+#: includes/class-anchor-updater.php:530
 msgid "No changelog available."
 msgstr ""
 
 #. translators: Message shown when a release has no notes
-#: includes/class-anchor-updater.php:518
+#: includes/class-anchor-updater.php:544
 msgid "No release notes available."
 msgstr ""
 
 #. translators: 1: version number, 2: release date
-#: includes/class-anchor-updater.php:523
+#: includes/class-anchor-updater.php:549
 msgid "Version %1$s - %2$s"
 msgstr ""
 
 #. translators: Text of the "Support" tab in the plugin details popup, followed by the GitHub issues link
-#: includes/class-anchor-updater.php:546
+#: includes/class-anchor-updater.php:572
 msgid "Found a bug or need help? Open an issue on GitHub."
 msgstr ""
 

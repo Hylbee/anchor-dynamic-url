@@ -51,6 +51,16 @@ class AnchorDynamicUrlUpdater {
 	const SUPPORT_URL = 'https://github.com/Hylbee/anchor-dynamic-url/issues';
 
 	/**
+	 * Folder holding the plugin files at the root of the GitHub repository.
+	 *
+	 * Release ZIPs contain this folder; GitHub's source archive contains it
+	 * inside the repository folder, next to the development files.
+	 *
+	 * @since 1.5.2
+	 */
+	const PLUGIN_FOLDER = 'anchor-dynamic-url';
+
+	/**
 	 * Plugin basename (folder/file.php).
 	 *
 	 * @var string
@@ -246,9 +256,16 @@ class AnchorDynamicUrlUpdater {
 		$source        = trailingslashit( $source );
 		$remote_source = trailingslashit( $remote_source );
 		$target        = $remote_source . $this->plugin_slug . '/';
+		$main_file     = basename( $this->plugin_file );
+
+		// GitHub source archive: the plugin files sit in a sub-folder of the repository.
+		if ( ! $wp_filesystem->exists( $source . $main_file )
+			&& $wp_filesystem->exists( $source . self::PLUGIN_FOLDER . '/' . $main_file ) ) {
+			$source .= self::PLUGIN_FOLDER . '/';
+		}
 
 		// Make sure the package really is this plugin before installing it.
-		if ( ! $wp_filesystem->exists( $source . basename( $this->plugin_file ) ) ) {
+		if ( ! $wp_filesystem->exists( $source . $main_file ) ) {
 			return new \WP_Error(
 				'anchor_dynamic_url_invalid_package',
 				/* translators: Error shown when the downloaded update ZIP is not this plugin */
@@ -382,8 +399,8 @@ class AnchorDynamicUrlUpdater {
 	 * Pick the ZIP to install from a release.
 	 *
 	 * Prefers a `anchor-dynamic-url*.zip` asset, then any ZIP asset, then the
-	 * source archive GitHub generates for the tag (its folder name is fixed by
-	 * fix_source_folder()).
+	 * source archive GitHub generates for the tag (fix_source_folder() picks
+	 * the plugin folder inside it).
 	 *
 	 * @since 1.5.2
 	 *
@@ -429,16 +446,25 @@ class AnchorDynamicUrlUpdater {
 			'requires_php' => '',
 		);
 
-		$response = wp_remote_get(
-			'https://raw.githubusercontent.com/' . $this->github_repo . '/' . rawurlencode( $tag ) . '/readme.txt',
-			$this->request_args()
-		);
+		// readme.txt sits in the plugin folder since 1.5.2, at the repository root before.
+		$readme = '';
 
-		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+		foreach ( array( self::PLUGIN_FOLDER . '/readme.txt', 'readme.txt' ) as $path ) {
+			$response = wp_remote_get(
+				'https://raw.githubusercontent.com/' . $this->github_repo . '/' . rawurlencode( $tag ) . '/' . $path,
+				$this->request_args()
+			);
+
+			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+				$readme = wp_remote_retrieve_body( $response );
+				break;
+			}
+		}
+
+		if ( '' === $readme ) {
 			return $headers;
 		}
 
-		$readme = wp_remote_retrieve_body( $response );
 		$labels = array(
 			'requires'     => 'Requires at least',
 			'tested'       => 'Tested up to',

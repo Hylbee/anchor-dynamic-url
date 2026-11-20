@@ -60,11 +60,11 @@ Anchor Dynamic URL solves a common WordPress problem: broken anchor links when p
 # Clone the repository
 git clone https://github.com/Hylbee/anchor-dynamic-url.git
 
-# Copy to WordPress plugins directory
-cp -r anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
+# Copy the plugin folder to the WordPress plugins directory
+cp -r anchor-dynamic-url/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
 
 # Generate translation files (optional)
-cd anchor-dynamic-url/languages
+cd anchor-dynamic-url/anchor-dynamic-url/languages
 msgfmt anchor-dynamic-url-fr_FR.po -o anchor-dynamic-url-fr_FR.mo
 ```
 
@@ -167,18 +167,43 @@ The plugin follows domain-driven design principles:
 
 ## Development
 
+### Repository Structure
+
+```
+anchor-dynamic-url/              ← repository root: development files only
+├── anchor-dynamic-url/          ← the plugin, exactly as published
+│   ├── anchor-dynamic-url.php
+│   ├── includes/
+│   ├── languages/
+│   ├── index.php
+│   ├── LICENSE
+│   └── readme.txt
+├── CHANGELOG.md
+├── README.md
+└── .gitignore
+```
+
+Anything shipped with the plugin goes in `anchor-dynamic-url/`; anything else stays at the root.
+
 ### Local Development Setup
 
 ```bash
 # Clone repository
 git clone https://github.com/Hylbee/anchor-dynamic-url.git
 
-# Create symbolic link in WordPress
-ln -s /path/to/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
-
-# Install development dependencies (if any)
-composer install --dev
+# Link the plugin folder into WordPress
+ln -s /path/to/anchor-dynamic-url/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/anchor-dynamic-url
 ```
+
+### Building a Release
+
+The release asset must be named `anchor-dynamic-url.zip` and contain the `anchor-dynamic-url/` folder at its root (versions up to 1.5.1 download exactly this file name when updating):
+
+```bash
+git archive --format=zip --output=anchor-dynamic-url.zip v1.5.2 anchor-dynamic-url
+```
+
+Attach the ZIP to the GitHub release of the same tag.
 
 ### Code Standards
 - Follows WordPress Coding Standards

@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Minimum WordPress version raised to 5.3**: `wp_date()` (used by the updater) requires WordPress 5.3
 - **"Tested up to" moved to `readme.txt` only** and set to 7.1 — the field is no longer declared in the main plugin header, as required by Plugin Check
 - **Updater internals**: Release data is cached under a new `anchor_dynamic_url_release` transient (the old `anchor_dynamic_url_remote_version` is still cleaned up); plugin header data is only read when needed instead of on every request
+- **Repository layout**: The plugin files (exactly what is published) now live in the `anchor-dynamic-url/` folder; development files (`README.md`, `CHANGELOG.md`, `.gitignore`) stay at the repository root. The updater reads `readme.txt` from `anchor-dynamic-url/readme.txt` (falling back to the root for older tags) and finds the plugin folder inside GitHub's source archive
 
 ### Compatibility
 - Tested on WordPress 7.1.5 with PHP 8.4
@@ -325,10 +326,11 @@ Contributions are welcome! Please follow these guidelines:
 # Clone the repository
 git clone [repository-url]
 
-# Install in WordPress plugins directory
-cp -r anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
+# Install in WordPress plugins directory (the plugin is the anchor-dynamic-url/ sub-folder)
+cp -r anchor-dynamic-url/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/
 
 # Generate translation files
+cd anchor-dynamic-url/anchor-dynamic-url
 msgfmt languages/anchor-dynamic-url-fr_FR.po -o languages/anchor-dynamic-url-fr_FR.mo
 ```
 
