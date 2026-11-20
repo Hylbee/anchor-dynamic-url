@@ -2,10 +2,10 @@
 
 A WordPress plugin that adds dynamic anchor management to menu items with automatic URL updates when page slugs change.
 
-[![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
+[![WordPress](https://img.shields.io/badge/WordPress-5.3%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Version](https://img.shields.io/badge/Version-1.5.1-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
+[![Version](https://img.shields.io/badge/Version-1.5.2-orange.svg)](https://github.com/Hylbee/anchor-dynamic-url/releases)
 
 ## Description
 
@@ -88,6 +88,8 @@ The plugin will automatically generate the URL: `https://yoursite.com/page#conta
 4. Enter your anchor in the **"Target Anchor"** field (e.g., `contact-section`)
 5. Save — the `#anchor` is appended to the URL at render time
 
+Links inside repeater items (Icon List, Social Icons, Price List, etc.) work the same way: each item has its own **"Target Anchor"** field. Several items may point to the same page with different anchors.
+
 **Containers with link wrapping**
 1. Select a Container element
 2. Set **HTML Tag** to `a` and enter a URL in the link field
@@ -150,14 +152,14 @@ The plugin follows domain-driven design principles:
 
 ## Requirements
 
-- **WordPress**: 5.0 or higher
+- **WordPress**: 5.3 or higher
 - **PHP**: 7.4 or higher
 - **Database**: Uses WordPress native meta system (no additional tables)
 
 ## Compatibility
 
-- ✅ **WordPress**: 5.0 - 7.0 (tested, including 7.0 prerelease)
-- ✅ **PHP**: 7.4 - 8.3
+- ✅ **WordPress**: 5.3 - 7.1 (tested up to 7.1.5)
+- ✅ **PHP**: 7.4 - 8.4
 - ✅ **Multisite**: Single-site installations only
 - ✅ **Themes**: Compatible with all themes
 - ✅ **Elementor**: 3.5+ (uses `unregister`/`register` API)

@@ -120,9 +120,9 @@ class Anchor_Dynamic_URL_Extended_URL_Control extends \Elementor\Control_URL {
 			$modified = $parent_template . $anchor_field;
 		}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		// $parent_template is Elementor's own Underscore.js template (trusted).
+		// $parent_template is Elementor's own Underscore.js template (trusted) and
 		// $anchor_field is built entirely from esc_html__/esc_attr__ calls above.
-		echo $modified;
+		// Escaping here would break the template's <# #> / {{ }} syntax.
+		echo $modified; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

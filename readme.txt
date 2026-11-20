@@ -1,9 +1,9 @@
 === Anchor Dynamic URL ===
 Tags: menu, anchor, url, dynamic, elementor
-Requires at least: 5.0
-Tested up to: 7.0
-Stable tag: 1.5.1
-Version: 1.5.1
+Requires at least: 5.3
+Tested up to: 7.1
+Stable tag: 1.5.2
+Version: 1.5.2
 Requires PHP: 7.4
 Author: Hylbee
 License: GPLv2 or later
@@ -23,8 +23,12 @@ All anchor inputs are strictly sanitized (letters, numbers, hyphens, underscores
 **Elementor integration**
 * "Target Anchor" field added to every URL control in the editor
 * Supports widgets, sections, columns, and linked containers (`<a>` tag)
+* Supports links inside repeater items (Icon List, Social Icons, Price List, etc.)
 * Works with internal URLs, external URLs, and empty `#` links
 * Output-buffer-safe rewriting with `ob_get_level()` verification
+
+**Support**
+Found a bug or need help? Open an issue on GitHub: https://github.com/Hylbee/anchor-dynamic-url/issues
 
 == Installation ==
 
@@ -58,6 +62,21 @@ Yes, all anchor inputs are sanitized and validated to prevent XSS attacks and en
 3. Frontend anchor links in action
 
 == Changelog ==
+
+= 1.5.2 - 2026-11-20 =
+* Fixed: Linked containers no longer render a duplicated URL (`href="url#anchor url"`); only the container's own href is rewritten
+* Fixed: Anchors now apply to links inside repeater items (Icon List, Social Icons, Price List, etc.)
+* Fixed: Several links to the same URL with different anchors each get their own anchor
+* Fixed: URLs escaped by esc_url() (query strings, www. URLs) are now matched
+* Fixed: Plugin Check — escaping annotation on the Elementor URL control template output
+* Fixed: Updates failing to download (the release ZIP is now read from the release assets)
+* Fixed: Plugin deactivated after an update when installed in a non-standard folder name
+* Fixed: Fatal error in "View details" when GitHub returns an error (rate limit)
+* Fixed: Compatibility data (Requires at least, Tested up to, Requires PHP) read from the new release's readme.txt
+* Added: Update URI header, auto-update toggle support and a "Support" tab in the plugin details popup
+* Changed: Minimum WordPress version raised to 5.3 (wp_date())
+* Changed: "Tested up to" declared in readme.txt only, set to 7.1
+* Compatibility: Tested on WordPress 7.1.5 with PHP 8.4
 
 = 1.5.1 - 2026-05-19 =
 * Fixed: Use fully qualified \stdClass in AnchorDynamicUrlUpdater compatibility array to prevent class resolution issues in namespaced contexts

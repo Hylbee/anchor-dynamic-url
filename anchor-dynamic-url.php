@@ -3,16 +3,16 @@
  * Plugin Name: Anchor Dynamic URL
  * Plugin URI: https://www.hylbee.fr/
  * Description: This plugin allows you to add a anchor to menu element with a dynamic URL for WordPress menu items and for Elementor element.
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Hylbee
  * Author URI: https://www.hylbee.fr/
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: anchor-dynamic-url
  * Domain Path: /languages
- * Requires at least: 5.0
- * Tested up to: 7.0
+ * Requires at least: 5.3
  * Requires PHP: 7.4
+ * Update URI: https://github.com/Hylbee/anchor-dynamic-url
  *
  * @package AnchorDynamicUrl
  */
@@ -39,7 +39,7 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 	return;
 }
 
-if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
+if ( version_compare( get_bloginfo( 'version' ), '5.3', '<' ) ) {
 	add_action(
 		'admin_notices',
 		function() {
@@ -47,7 +47,7 @@ if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
 			printf(
 				/* translators: %s: Required WordPress version */
 				esc_html__( 'Anchor Dynamic URL requires WordPress version %s or higher.', 'anchor-dynamic-url' ),
-				esc_html( '5.0' )
+				esc_html( '5.3' )
 			);
 			echo '</p></div>';
 		}
@@ -56,7 +56,7 @@ if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
 }
 
 // Define plugin constants for use throughout the plugin.
-define( 'ANCHOR_DYNAMIC_URL_VERSION', '1.5.1' );
+define( 'ANCHOR_DYNAMIC_URL_VERSION', '1.5.2' );
 define( 'ANCHOR_DYNAMIC_URL_FILE', __FILE__ );
 define( 'ANCHOR_DYNAMIC_URL_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ANCHOR_DYNAMIC_URL_URL', plugin_dir_url( __FILE__ ) );
@@ -116,10 +116,14 @@ function anchor_dynamic_url_activate() {
 	}
 
 	// Check WordPress version compatibility.
-	if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
+	if ( version_compare( get_bloginfo( 'version' ), '5.3', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( 'Anchor Dynamic URL requires WordPress 5.0 or higher.', 'anchor-dynamic-url' ),
+			sprintf(
+				/* translators: %s: Required WordPress version */
+				esc_html__( 'Anchor Dynamic URL requires WordPress version %s or higher.', 'anchor-dynamic-url' ),
+				esc_html( '5.3' )
+			),
 			esc_html__( 'Plugin Activation Error', 'anchor-dynamic-url' ),
 			array( 'back_link' => true )
 		);
@@ -136,6 +140,19 @@ function anchor_dynamic_url_activate() {
 	}
 
 	// Clear cached update information to force fresh check.
+	anchor_dynamic_url_clear_update_cache();
+}
+
+/**
+ * Delete the cached GitHub release and changelog.
+ *
+ * `anchor_dynamic_url_remote_version` is the cache key used before 1.5.2.
+ *
+ * @since 1.5.2
+ */
+function anchor_dynamic_url_clear_update_cache() {
+	delete_transient( 'anchor_dynamic_url_release' );
+	delete_transient( 'anchor_dynamic_url_changelog' );
 	delete_transient( 'anchor_dynamic_url_remote_version' );
 }
 
@@ -156,8 +173,7 @@ register_deactivation_hook( __FILE__, 'anchor_dynamic_url_deactivate' );
  * @since 1.0.0
  */
 function anchor_dynamic_url_deactivate() {
-	delete_transient( 'anchor_dynamic_url_remote_version' );
-	delete_transient( 'anchor_dynamic_url_changelog' );
+	anchor_dynamic_url_clear_update_cache();
 }
 
 /**
@@ -179,8 +195,7 @@ register_uninstall_hook( __FILE__, 'anchor_dynamic_url_uninstall' );
  */
 function anchor_dynamic_url_uninstall() {
 	// Clear all plugin transients.
-	delete_transient( 'anchor_dynamic_url_remote_version' );
-	delete_transient( 'anchor_dynamic_url_changelog' );
+	anchor_dynamic_url_clear_update_cache();
 
 	// Remove all menu anchor meta data using WordPress functions.
 	$menu_items = get_posts(

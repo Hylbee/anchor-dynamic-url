@@ -10,6 +10,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Nothing yet
 
+## [1.5.2] - 2026-11-20
+
+### Fixed
+- **Duplicated URL on linked containers**: Containers with HTML tag `a` rendered `href="url#anchor url"` (and duplicated `target`/`rel`) because the plugin added link attributes from a hook and Elementor's `Container::before_render()` added its own. The container output is now buffered and only the container's own `href` (matched by `data-id`) is rewritten — child links are never touched. Containers with an empty URL get `href="#anchor"`
+- **Anchors ignored in repeater links**: Links stored in repeater items (Icon List, Social Icons, Price List, …) were never rewritten because only top-level widget settings were scanned. URL controls are now collected recursively
+- **Several links to the same URL**: When items share a URL with different anchors (or some without anchor), each link now gets its own anchor instead of all receiving the first one
+- **Escaped URLs not matched**: Links printed by Elementor through `esc_url()` (`&#038;` in query strings, `http://` added to `www.` URLs) are now matched; the rewritten `href` keeps proper attribute escaping
+- **Plugin Check**: `phpcs:ignore` on the Elementor URL control template output now sits on the `echo` line so it is actually applied
+- **Updates failing to download**: The updater always requested `anchor-dynamic-url.zip`, while the v1.5.0 and v1.5.1 release assets are named `anchor-dynamic-url_1.5.x.zip` (404 → "Download failed"). The package URL is now read from the release assets (an `anchor-dynamic-url*.zip` asset, then any ZIP asset, then GitHub's source archive)
+- **Plugin deactivated after an update**: When the plugin is installed in a folder not named like the ZIP's top-level folder (e.g. `anchor-dynamic-url-aIPGWyMNsUTyyBKb` after uploading a ZIP without a top-level folder), WordPress installed the update in a new folder and deleted the old one, so the plugin path changed. The unpacked package is now moved into the installed folder name (`upgrader_source_selection`), and a package that does not contain the plugin is rejected
+- **Fatal error in "View details"**: A GitHub error payload (e.g. rate limit) made the changelog loop throw a `TypeError` on PHP 8
+- **GitHub failures retried on every check**: A failed release check is now cached for 1 hour; the "Check again" button of Dashboard > Updates bypasses the cache
+- **Wrong compatibility data**: "Tested up to" used the local "Requires at least" value (or a hardcoded 6.4 in the popup). `requires`, `tested` and `requires_php` are now read from the new release's `readme.txt`, so WordPress can block an update the server cannot run
+
+### Added
+- **`Update URI` header**: WordPress.org can no longer offer another plugin's update for the `anchor-dynamic-url` slug
+- **Up-to-date status**: The plugin is listed in WordPress's `no_update` data, which enables the auto-update toggle and the "View details" link when no update is pending
+- **Support tab**: The plugin details popup has a "Support" tab linking to [GitHub issues](https://github.com/Hylbee/anchor-dynamic-url/issues)
+
+### Removed
+- Empty `show_upgrade_notification()` callback hooked on every admin page load
+
+### Changed
+- **Minimum WordPress version raised to 5.3**: `wp_date()` (used by the updater) requires WordPress 5.3
+- **"Tested up to" moved to `readme.txt` only** and set to 7.1 — the field is no longer declared in the main plugin header, as required by Plugin Check
+- **Updater internals**: Release data is cached under a new `anchor_dynamic_url_release` transient (the old `anchor_dynamic_url_remote_version` is still cleaned up); plugin header data is only read when needed instead of on every request
+
+### Compatibility
+- Tested on WordPress 7.1.5 with PHP 8.4
+
 ## [1.5.1] - 2026-05-19
 
 ### Fixed

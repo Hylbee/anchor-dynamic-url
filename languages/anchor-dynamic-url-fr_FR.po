@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the Anchor Dynamic URL plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Anchor Dynamic URL 1.4.0\n"
+"Project-Id-Version: Anchor Dynamic URL 1.5.2\n"
 "Report-Msgid-Bugs-To: https://github.com/Hylbee/anchor-dynamic-url/issues\n"
-"POT-Creation-Date: 2026-04-30 00:00+0000\n"
-"PO-Revision-Date: 2026-04-30 00:00+0000\n"
+"POT-Creation-Date: 2026-11-20 10:45+0000\n"
+"PO-Revision-Date: 2026-11-20 10:45+0000\n"
 "Last-Translator: Hylbee <contact@hylbee.fr>\n"
 "Language-Team: Français\n"
 "Language: fr_FR\n"
@@ -17,55 +17,26 @@ msgstr ""
 "X-Domain: anchor-dynamic-url\n"
 
 #. translators: %s: Required PHP version
-#: anchor-dynamic-url.php:35
+#: anchor-dynamic-url.php:33
 msgid "Anchor Dynamic URL requires PHP version %s or higher."
 msgstr "Anchor Dynamic URL nécessite PHP version %s ou supérieur."
 
 #. translators: %s: Required WordPress version
-#: anchor-dynamic-url.php:51
+#: anchor-dynamic-url.php:49
+#: anchor-dynamic-url.php:124
 msgid "Anchor Dynamic URL requires WordPress version %s or higher."
 msgstr "Anchor Dynamic URL nécessite WordPress version %s ou supérieur."
 
-#. translators: Error message shown when WordPress version is too old (wp_die title)
-#: anchor-dynamic-url.php:124
-msgid "Anchor Dynamic URL requires WordPress 5.0 or higher."
-msgstr "Anchor Dynamic URL nécessite WordPress 5.0 ou supérieur."
-
 #. translators: Title of the wp_die error page on activation failure
-#: anchor-dynamic-url.php:125
-#: anchor-dynamic-url.php:135
+#: anchor-dynamic-url.php:127
+#: anchor-dynamic-url.php:137
 msgid "Plugin Activation Error"
 msgstr "Erreur d'activation du plugin"
 
 #. translators: Error message shown when PHP version is too old (wp_die title)
-#: anchor-dynamic-url.php:134
+#: anchor-dynamic-url.php:136
 msgid "Anchor Dynamic URL requires PHP 7.4 or higher."
 msgstr "Anchor Dynamic URL nécessite PHP 7.4 ou supérieur."
-
-#. translators: Error message when changelog cannot be fetched from GitHub
-#: includes/class-anchor-updater.php:247
-msgid "Unable to fetch changelog."
-msgstr "Impossible de récupérer le journal des modifications."
-
-#. translators: Message shown when no changelog data is available
-#: includes/class-anchor-updater.php:255
-msgid "No changelog available."
-msgstr "Aucun journal des modifications disponible."
-
-#. translators: Message shown when a release has no notes
-#: includes/class-anchor-updater.php:264
-msgid "No release notes available."
-msgstr "Aucune note de version disponible."
-
-#. translators: 1: version number, 2: release date
-#: includes/class-anchor-updater.php:268
-msgid "Version %1$s - %2$s"
-msgstr "Version %1$s - %2$s"
-
-#. translators: 1: version number, 2: update URL
-#: includes/class-anchor-updater.php:297
-msgid "Anchor Dynamic URL version %1$s is available. <a href=\"%2$s\">Update now</a>."
-msgstr "Anchor Dynamic URL version %1$s est disponible. <a href=\"%2$s\">Mettre à jour maintenant</a>."
 
 #. translators: Link text for viewing the plugin changelog
 #: includes/class-anchor-manager.php:158
@@ -102,17 +73,52 @@ msgstr "ex : section-contact"
 msgid "Adds #anchor to the URL. Updates automatically if the page slug changes."
 msgstr "Ajoute #ancre à l'URL. Se met à jour automatiquement si le slug de la page change."
 
+#. translators: Error shown when the downloaded update ZIP is not this plugin
+#: includes/class-anchor-updater.php:255
+msgid "The update package does not contain the Anchor Dynamic URL plugin."
+msgstr "Le paquet de mise à jour ne contient pas le plugin Anchor Dynamic URL."
+
+#. translators: Error shown when the unpacked update cannot be moved to the plugin folder name
+#: includes/class-anchor-updater.php:282
+msgid "Unable to prepare the update package folder."
+msgstr "Impossible de préparer le dossier du paquet de mise à jour."
+
+#. translators: Error message when changelog cannot be fetched from GitHub
+#: includes/class-anchor-updater.php:496
+msgid "Unable to fetch changelog."
+msgstr "Impossible de récupérer le journal des modifications."
+
+#. translators: Message shown when no changelog data is available
+#: includes/class-anchor-updater.php:504
+msgid "No changelog available."
+msgstr "Aucun journal des modifications disponible."
+
+#. translators: Message shown when a release has no notes
+#: includes/class-anchor-updater.php:518
+msgid "No release notes available."
+msgstr "Aucune note de version disponible."
+
+#. translators: 1: version number, 2: release date
+#: includes/class-anchor-updater.php:523
+msgid "Version %1$s - %2$s"
+msgstr "Version %1$s - %2$s"
+
+#. translators: Text of the "Support" tab in the plugin details popup, followed by the GitHub issues link
+#: includes/class-anchor-updater.php:546
+msgid "Found a bug or need help? Open an issue on GitHub."
+msgstr "Un bug ou besoin d'aide ? Ouvrez un ticket sur GitHub."
+
 #. translators: Label for the anchor target input field in Elementor
-#: includes/elementor-integration.php:107
+#: includes/class-elementor-url-control.php:67
 msgid "Target Anchor"
 msgstr "Ancre cible"
 
 #. translators: Placeholder text for anchor target input in Elementor
-#: includes/elementor-integration.php:108
+#: includes/class-elementor-url-control.php:70
 msgid "section-id"
 msgstr "id-section"
 
 #. translators: Help text explaining how to use the anchor target field in Elementor
-#: includes/elementor-integration.php:110
+#: includes/class-elementor-url-control.php:73
 msgid "ID of the target element for scrolling (without #). Leave blank to use the normal link."
 msgstr "ID de l'élément cible pour le défilement (sans #). Laissez vide pour utiliser le lien normal."
