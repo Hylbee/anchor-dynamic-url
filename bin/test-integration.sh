@@ -72,17 +72,24 @@ fail() {
 	exit 1
 }
 
-# 4. Wait until WordPress, Elementor and the plugin are loaded.
+# 4. Wait for the blueprint to finish. Playground already answers requests while the
+#    blueprint is still installing plugins, and prints "WordPress is running on" once
+#    it is done.
 deadline=$(( $(date +%s) + READY_TIMEOUT ))
-until curl -sf "$BASE/adu-tests/setup.php?ready" -o "$WORK/out/ready.json"; do
+until grep -q "WordPress is running on" "$WORK/out/playground.log"; do
 	kill -0 "$PLAYGROUND_PID" 2>/dev/null || fail "Playground stopped before WordPress was ready."
 	[ "$(date +%s)" -lt "$deadline" ] || fail "WordPress was not ready after ${READY_TIMEOUT}s."
 	sleep 3
 done
+
+# Then check WordPress, Elementor and the plugin are loaded (HTTP 200 only then).
+# -L: Playground answers its very first request with an auto-login redirect.
+ready_code="$(curl -sL -o "$WORK/out/ready.json" -w '%{http_code}' "$BASE/adu-tests/setup.php?ready" || true)"
+[ "$ready_code" = "200" ] || fail "Plugins not loaded (HTTP $ready_code): $(cat "$WORK/out/ready.json" 2>/dev/null || true)"
 echo "Ready: $(cat "$WORK/out/ready.json")"
 
 # 5. Create the test content, then check the frontend HTML (on the host).
-curl -sS --fail-with-body "$BASE/adu-tests/setup.php" -o "$WORK/out/setup.json" \
+curl -sSL --fail-with-body "$BASE/adu-tests/setup.php" -o "$WORK/out/setup.json" \
 	|| fail "setup.php failed: $(cat "$WORK/out/setup.json" 2>/dev/null || true)"
 
 status=0
@@ -93,7 +100,7 @@ php "$ROOT/tests/integration/assert-frontend.php" "$WORK/out/setup.json" "$WORK/
 
 # 6. Tests running inside WordPress: menus, updater, update end to end, PHP errors.
 echo
-curl -sS --fail-with-body "$BASE/adu-tests/run.php" -o "$WORK/out/run.txt" || status=1
+curl -sSL --fail-with-body "$BASE/adu-tests/run.php" -o "$WORK/out/run.txt" || status=1
 cat "$WORK/out/run.txt"
 
 exit $status

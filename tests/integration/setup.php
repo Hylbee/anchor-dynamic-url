@@ -34,7 +34,14 @@ if ( isset( $_GET['ready'] ) ) { // phpcs:ignore WordPress.Security.NonceVerific
 
 if ( ! $adu_loaded ) {
 	status_header( 500 );
-	echo wp_json_encode( array( 'error' => 'Elementor or Anchor Dynamic URL is not active.' ) );
+	echo wp_json_encode(
+		array(
+			'error'          => 'Elementor or Anchor Dynamic URL is not loaded.',
+			'plugin'         => defined( 'ANCHOR_DYNAMIC_URL_VERSION' ),
+			'elementor'      => defined( 'ELEMENTOR_VERSION' ) && did_action( 'elementor/loaded' ),
+			'active_plugins' => get_option( 'active_plugins' ),
+		)
+	);
 	exit;
 }
 
