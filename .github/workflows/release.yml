@@ -1,0 +1,186 @@
+# Tests every push and pull request; on main, publishes the GitHub release.
+#
+# Release flow: bump the version (plugin header, constant, readme.txt, CHANGELOG.md)
+# on a release/x.y.z branch, then merge it into main. When all tests pass on main
+# and no release exists yet for that version, this workflow tags vX.Y.Z and publishes
+# the release with anchor-dynamic-url.zip attached and the CHANGELOG section as notes.
+# A push to main without a version bump only runs the tests.
+
+name: Tests & Release
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  lint:
+    name: PHP ${{ matrix.php }} syntax
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+
+      - name: Check PHP syntax
+        run: find anchor-dynamic-url bin tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  standards:
+    name: Coding standards & version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer
+
+      - name: Check the version is declared consistently
+        run: php bin/version.php
+
+      - name: Install PHP_CodeSniffer and WordPress Coding Standards
+        run: composer install --no-interaction --no-progress
+
+      - name: PHPCS (Plugin Check rules, see phpcs.xml.dist)
+        run: vendor/bin/phpcs
+
+  build:
+    name: Build ZIP
+    needs: [lint, standards]
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: none
+
+      - name: Read version
+        id: version
+        run: echo "version=$(php bin/version.php)" >> "$GITHUB_OUTPUT"
+
+      - name: Build anchor-dynamic-url.zip
+        run: php bin/build-zip.php dist/anchor-dynamic-url.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: anchor-dynamic-url-zip
+          path: dist/anchor-dynamic-url.zip
+          if-no-files-found: error
+
+  integration:
+    name: WordPress ${{ matrix.wp }} / PHP ${{ matrix.php }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Oldest combination Elementor supports, and the current one.
+          - php: '7.4'
+            wp: '6.8'
+          - php: '8.4'
+            wp: 'latest'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: none
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: anchor-dynamic-url-zip
+          path: dist
+
+      - name: Run integration tests in WordPress Playground
+        run: bash bin/test-integration.sh --php '${{ matrix.php }}' --wp '${{ matrix.wp }}' --zip dist/anchor-dynamic-url.zip
+
+      - name: Upload logs and fetched pages
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-wp${{ matrix.wp }}-php${{ matrix.php }}
+          path: build/integration/out
+
+  release:
+    name: Publish release
+    needs: [build, integration]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: none
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: anchor-dynamic-url-zip
+          path: dist
+
+      - name: Publish v${{ needs.build.outputs.version }}
+        run: |
+          TAG="v$VERSION"
+
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "::notice::Release $TAG already exists: nothing to publish. Bump the version to release."
+            exit 0
+          fi
+
+          LATEST="$(gh release view --json tagName --jq .tagName 2> /dev/null || true)"
+          if [ -n "$LATEST" ] && ! php -r 'exit( version_compare( $argv[1], ltrim( $argv[2], "vV" ), ">" ) ? 0 : 1 );' "$VERSION" "$LATEST"; then
+            echo "::error::Version $VERSION is not greater than the latest release $LATEST."
+            exit 1
+          fi
+
+          php bin/changelog.php "$VERSION" > release-notes.md
+
+          gh release create "$TAG" dist/anchor-dynamic-url.zip \
+            --target "$GITHUB_SHA" \
+            --title "$TAG" \
+            --notes-file release-notes.md \
+            --latest
+
+          echo "::notice::Published $TAG with anchor-dynamic-url.zip"

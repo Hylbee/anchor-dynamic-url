@@ -1,2 +1,6 @@
 .claude/
 *.zip
+/vendor/
+/dist/
+/build/
+/node_modules/

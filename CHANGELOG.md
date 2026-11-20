@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Minimum WordPress version raised to 5.3**: `wp_date()` (used by the updater) requires WordPress 5.3
 - **"Tested up to" moved to `readme.txt` only** and set to 7.1 — the field is no longer declared in the main plugin header, as required by Plugin Check
 - **Updater internals**: Release data is cached under a new `anchor_dynamic_url_release` transient (the old `anchor_dynamic_url_remote_version` is still cleaned up); plugin header data is only read when needed instead of on every request
+- **Automated tests and releases**: A GitHub Actions workflow checks PHP syntax (7.4–8.4), coding standards (Plugin Check rules) and version consistency, then tests the built ZIP in WordPress Playground with Elementor (frontend links, menu anchors, updater, a real update into a non-standard folder). On `main`, it publishes the GitHub release with `anchor-dynamic-url.zip` when the version has no release yet
 - **Repository layout**: The plugin files (exactly what is published) now live in the `anchor-dynamic-url/` folder; development files (`README.md`, `CHANGELOG.md`, `.gitignore`) stay at the repository root. The updater reads `readme.txt` from `anchor-dynamic-url/readme.txt` (falling back to the root for older tags) and finds the plugin folder inside GitHub's source archive
 
 ### Compatibility

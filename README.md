@@ -178,9 +178,13 @@ anchor-dynamic-url/              ← repository root: development files only
 │   ├── index.php
 │   ├── LICENSE
 │   └── readme.txt
+├── .github/workflows/release.yml  ← tests + automated release
+├── bin/                     ← version check, changelog extraction, ZIP build, integration runner
+├── tests/integration/       ← tests run in WordPress Playground
 ├── CHANGELOG.md
 ├── README.md
-└── .gitignore
+├── composer.json            ← development tools (PHPCS)
+└── phpcs.xml.dist           ← Plugin Check coding-standard rules
 ```
 
 Anything shipped with the plugin goes in `anchor-dynamic-url/`; anything else stays at the root.
@@ -195,15 +199,41 @@ git clone https://github.com/Hylbee/anchor-dynamic-url.git
 ln -s /path/to/anchor-dynamic-url/anchor-dynamic-url /path/to/wordpress/wp-content/plugins/anchor-dynamic-url
 ```
 
-### Building a Release
+### Tests
 
-The release asset must be named `anchor-dynamic-url.zip` and contain the `anchor-dynamic-url/` folder at its root (versions up to 1.5.1 download exactly this file name when updating):
+The GitHub Actions workflow (`.github/workflows/release.yml`) runs on every push to `main` and `release/**` and on pull requests:
+
+1. **PHP syntax** on PHP 7.4 to 8.4
+2. **Coding standards** (`phpcs.xml.dist`, the WordPress Coding Standards rules used by Plugin Check) and **version consistency** (`bin/version.php`)
+3. **Build** of `anchor-dynamic-url.zip`
+4. **Integration tests** of that ZIP in [WordPress Playground](https://wordpress.github.io/wordpress-playground/) (WordPress and PHP compiled to WebAssembly) with Elementor, on WordPress 6.8 / PHP 7.4 and WordPress latest / PHP 8.4:
+   - Elementor frontend: linked container written once with its anchor, Icon List repeater links, several links sharing a URL, escaped query strings
+   - Menu anchors, including after a page slug change
+   - Updater against a simulated GitHub API: update detection, compatibility data, "View details" popup (changelog, Support tab)
+   - A real update installed by WordPress into a non-standard folder name (the folder is kept, the plugin stays active)
+   - No PHP warning or notice from the plugin
+
+Run them locally (Node.js 20+, PHP with the zip extension):
 
 ```bash
-git archive --format=zip --output=anchor-dynamic-url.zip v1.5.2 anchor-dynamic-url
+composer install                         # once
+composer lint                            # PHPCS
+php bin/version.php                      # version consistency
+bash bin/test-integration.sh             # WordPress latest / PHP 8.4
+bash bin/test-integration.sh --wp 6.8 --php 7.4
 ```
 
-Attach the ZIP to the GitHub release of the same tag.
+### Releasing
+
+Releases are published automatically:
+
+1. On a `release/x.y.z` branch, bump the version in `anchor-dynamic-url/anchor-dynamic-url.php` (header and `ANCHOR_DYNAMIC_URL_VERSION`), `anchor-dynamic-url/readme.txt` (Stable tag, Version, changelog) and add the `## [x.y.z]` section to `CHANGELOG.md`
+2. Merge the branch into `main`
+3. When every test passes on `main`, the workflow creates the `vx.y.z` tag and the GitHub release, with `anchor-dynamic-url.zip` attached and the CHANGELOG section as release notes
+
+A push to `main` whose version already has a release only runs the tests. A version lower than the latest release is rejected.
+
+The release asset must stay named `anchor-dynamic-url.zip` with the `anchor-dynamic-url/` folder at its root: versions up to 1.5.1 download exactly this file name when updating. To build it by hand: `php bin/build-zip.php`.
 
 ### Code Standards
 - Follows WordPress Coding Standards
